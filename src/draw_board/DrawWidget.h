@@ -141,5 +141,9 @@ private:
 
 
     std::vector<std::shared_ptr<BaseShape>> shapes_;
+
+
+    // 编辑状态中的文本图形
+    std::shared_ptr<TextShape> editing_text_shape_ = nullptr;
 };
 

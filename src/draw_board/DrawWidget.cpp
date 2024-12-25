@@ -177,6 +177,42 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
     //    }
     //}
 
+
+
+    if(event->button() == Qt::MouseButton::LeftButton){
+        QPoint point = event->pos();
+        std::shared_ptr<BaseShape> can_select_shape = nullptr;
+        for (auto& shape : shapes_) {
+            if (shape->EnterSelectRange(point)) {
+                can_select_shape = shape;
+                break;
+            }
+        }
+
+        if (can_select_shape) {
+            if (EShapeType::kText == can_select_shape->GetShapeType()) {
+            
+                editing_text_shape_ = std::dynamic_pointer_cast<TextShape>(can_select_shape);
+                editing_text_shape_->SetHiden(true);
+                //text_edit_->Clear();
+     
+                qDebug() << "html : " << editing_text_shape_->GetHtml();
+                text_edit_->SetHtml(editing_text_shape_->GetHtml());
+                text_edit_->show();
+                auto point = editing_text_shape_->start_point_;
+                point.setY(point.y() - 30);
+                text_edit_->move(point);
+            }
+        }
+
+
+
+
+    }
+
+
+
+
     QOpenGLWidget::mouseDoubleClickEvent(event);
 }
 
@@ -346,15 +382,17 @@ void DrawWidget::fn_Recv_ContentEdit_GetContent(const QString& content) {
 
 void DrawWidget::InitSigChannel() {
     connect(text_edit_, &TextEditWidget::SigHtml, this, [=](QString html) {
-
-
         qDebug() << "text_edit_ x = " << double(text_edit_->pos().x()) + 4 << ", y = " << double(text_edit_->pos().y() + 30);
-
-
-        std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + 4, double(text_edit_->pos().y() + 30), html, this);
-
-        shapes_.emplace_back(text_shape);
-
+        if(editing_text_shape_) {  // 如果是正在编辑的，就修改编辑的textshape
+            editing_text_shape_->SetHtml(html);
+            editing_text_shape_->SetHiden(false);
+            editing_text_shape_->SetStartPoint({ text_edit_->pos().x() + 4, text_edit_->pos().y() + 30 });
+            editing_text_shape_ = nullptr;
+        }
+        else {
+            std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + 4, double(text_edit_->pos().y() + 30), html, this);
+            shapes_.emplace_back(text_shape);
+        }
         text_edit_->hide();
     });
 }

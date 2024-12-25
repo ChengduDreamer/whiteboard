@@ -73,15 +73,6 @@ void CustomLineShape::MoveShape(const QPoint& curPoint, const QPoint& nextPoint)
 }
 
 void CustomLineShape::PaintFrame(QPainter& painter) {
-   // painter.save(); // 保存画笔
-   // QPen frame_pen(Qt::blue, 1, Qt::DashDotLine, Qt::RoundCap);
-   // painter.setPen(frame_pen);
-   // painter.drawLine(start_point_.x(), start_point_.y() + 5, start_point_.x(), start_point_.y() - 5);
-   // painter.drawLine(start_point_.x(), start_point_.y() - 5, end_point_.x(), end_point_.y() - 5);
-   // painter.drawLine(end_point_.x(), end_point_.y() - 5, end_point_.x(), end_point_.y() + 5);
-   // painter.drawLine(end_point_.x(), end_point_.y() + 5, start_point_.x(), start_point_.y() + 5);
-   // painter.restore(); // 恢复画笔
-
     painter.save();
     QPen frame_pen(Qt::blue, 1, Qt::DashDotLine, Qt::RoundCap);
     painter.setPen(frame_pen);

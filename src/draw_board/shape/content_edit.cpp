@@ -219,3 +219,7 @@ void TextEditWidget::SetFocus() {
 void TextEditWidget::Clear() {
     edit_->clear();
 }
+
+void TextEditWidget::SetHtml(const QString& html) {
+    edit_->setHtml(html);
+}

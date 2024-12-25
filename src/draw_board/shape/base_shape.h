@@ -17,14 +17,6 @@ enum class EShapeType
     kCustomLine,  //画笔画线
 };
 
-////已知直线上的两点P1(X1,Y1) P2(X2,Y2)， P1 P2两点不重合。则直线的一般式方程AX+BY+C=0中，A B C分别等于：
-//struct LineArgument{
-//    double A; // A = Y2 - Y1
-//    double B; // B = X1 - X2
-//    double C; // C = X2*Y1 - X1*Y2
-//};
-//
-//LineArgument getLinePara(const double& x1,const double& y1,const double& x2,const double& y2);
 
 class BaseShape
 {

@@ -24,7 +24,7 @@ public:
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
     
-
+    void SetHtml(const QString& html);
 Q_SIGNALS:
     //void SigTextDocument(QTextDocument* text_doc);
 
