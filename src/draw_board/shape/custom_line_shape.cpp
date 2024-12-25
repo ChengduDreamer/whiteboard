@@ -44,38 +44,32 @@ bool CustomLineShape::EnterSelectRange(const QPoint& point) {
 }
 
 
-void CustomLineShape::DrawShape(QPainter& painter)
-{
-    //painter.drawLine(this->GetStartPosX(), this->GetStartPosY(), this->GetEndPosX(), this->GetEndPosY());
+void CustomLineShape::DrawShape(QPainter& painter) {
     painter.save();
-    //painter.translate(start_point_);
     painter.drawPolyline(points_data_);
     painter.restore();
 }
 
-// 更新数据
 void CustomLineShape::MoveShape(const QPoint& curPoint, const QPoint& nextPoint) {
-
-
-    start_point_ = nextPoint;
-    
+    if (points_data_.empty()) {
+        return;
+    }
+    int min_x = points_data_[0].x();
+    int min_y = points_data_[0].y();
+    int max_x = min_x;
+    int max_y = min_y;
     QPoint dis = nextPoint - curPoint;
-
     for (auto& p : points_data_) {
         p += dis;
+        if (p.x() < min_x) 
+            min_x = p.x();
+        if (p.x() > max_x) 
+            max_x = p.x();
+        if (p.y() < min_y) 
+            min_y = p.y();
+        if (p.y() > max_y) max_y = p.y();
     }
-    return;
-    this->SetStartPosX(this->GetStartPosX() + dis.x());
-    this->SetStartPosY(this->GetStartPosY() + dis.y());
-    this->SetEndPosX(this->GetEndPosX() + dis.x());
-    this->SetEndPosY(this->GetEndPosY() + dis.y());
-    this->start_point_.setX(this->GetStartPosX());
-    this->start_point_.setY(this->GetStartPosY());
-    this->end_point_.setX(this->GetEndPosX());
-    this->end_point_.setY(this->GetEndPosY());
-
-    this->center_point_.setX((this->start_point_.x() + this->end_point_.x()) / 2);
-    this->center_point_.setY((this->start_point_.y() + this->end_point_.y()) / 2);
+    rectf_ = QRectF(min_x, min_y, max_x - min_x, max_y - min_y);
 }
 
 void CustomLineShape::PaintFrame(QPainter& painter) {
@@ -87,6 +81,12 @@ void CustomLineShape::PaintFrame(QPainter& painter) {
    // painter.drawLine(end_point_.x(), end_point_.y() - 5, end_point_.x(), end_point_.y() + 5);
    // painter.drawLine(end_point_.x(), end_point_.y() + 5, start_point_.x(), start_point_.y() + 5);
    // painter.restore(); // 恢复画笔
+
+    painter.save();
+    QPen frame_pen(Qt::blue, 1, Qt::DashDotLine, Qt::RoundCap);
+    painter.setPen(frame_pen);
+    painter.drawRect(rectf_);
+    painter.restore();
 }
 
 //void CustomLineShape::rotate(QPoint& BasePoint, double arg = 90)

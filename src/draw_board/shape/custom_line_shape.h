@@ -60,7 +60,7 @@ public:
 
 
 private:
-
+    QRectF rectf_;  // 所有点的外接矩形
    /* QPoint start_point_;*/
 
     double start_pos_x_ = 0;   // 起点横坐标
