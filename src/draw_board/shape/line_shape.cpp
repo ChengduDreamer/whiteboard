@@ -47,18 +47,18 @@ LineShape::LineShape(const double &start_pos_x, const double &start_pos_y, const
     this->center_point_.setY((this->start_point_.y()+this->end_point_.y())/2);
 }
 
-bool LineShape::HasSelected(const QPoint &pos)
-{
-    //判断点是否在直线上
-    LineArgument LP = GetLinePara(this->GetStartPosX(),this->GetStartPosY(),this->GetEndPosX(),this->GetEndPosY());
-    this->selected_ = false;
-    if(pos.x() > this->GetStartPosX() && pos.x() < this->GetEndPosX()){
-        if(((LP.A*pos.x()+LP.B*(pos.y() + 5)+LP.C < 0) && (LP.A*pos.x()+LP.B*(pos.y()-5)+LP.C > 0)) || ((LP.A*pos.x()+LP.B*(pos.y() + 5)+LP.C > 0) && (LP.A*pos.x()+LP.B*(pos.y()-5)+LP.C < 0))  ){
-            this->selected_ = true;
-        }
-    }
-    return this->selected_;
-}
+//bool LineShape::HasSelected(const QPoint &pos)
+//{
+//    //判断点是否在直线上
+//    LineArgument LP = GetLinePara(this->GetStartPosX(),this->GetStartPosY(),this->GetEndPosX(),this->GetEndPosY());
+//    this->selected_ = false;
+//    if(pos.x() > this->GetStartPosX() && pos.x() < this->GetEndPosX()){
+//        if(((LP.A*pos.x()+LP.B*(pos.y() + 5)+LP.C < 0) && (LP.A*pos.x()+LP.B*(pos.y()-5)+LP.C > 0)) || ((LP.A*pos.x()+LP.B*(pos.y() + 5)+LP.C > 0) && (LP.A*pos.x()+LP.B*(pos.y()-5)+LP.C < 0))  ){
+//            this->selected_ = true;
+//        }
+//    }
+//    return this->selected_;
+//}
 
 
 

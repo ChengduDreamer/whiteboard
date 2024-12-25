@@ -10,8 +10,6 @@
 class TextShape : public BaseShape
 {
 public:
-    TextShape();
-    TextShape(QPoint& click_point, ContentEdit& content_edit);
     TextShape(const double& start_pos_x, const double& start_pos_y, const QString& content, QWidget* parent);
     ~TextShape();
 
@@ -45,6 +43,8 @@ public:
     void PaintFrame(QPainter& painter) override;
 
     bool EnterSelectRange(const QPoint& point) override;
+
+    bool PointInRectangle(const QRectF& rect, const QPointF& point);
 
     QString html_content_;
 

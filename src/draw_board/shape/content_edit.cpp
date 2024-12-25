@@ -7,49 +7,6 @@
 #include <qsizepolicy.h>
 #include <qpixmap.h>
 
-ContentEdit::ContentEdit(QWidget *parent) : QPlainTextEdit(parent) {
-}
-
-ContentEdit::~ContentEdit()
-{
-
-}
-
-void ContentEdit::focusOutEvent(QFocusEvent *e){
-    hide();
-    //    emit Signal_GetContent(this->text());
-    QPlainTextEdit::focusOutEvent(e);
-}
-
-void ContentEdit::keyPressEvent(QKeyEvent *e) {
-    //if(e->key() == Qt::Key_Enter
-    //        || e->key() ==Qt::Key_Escape
-    //        || e->key() == Qt::Key_Return){
-    //    hide();
-    //    emit Signal_GetContent(this->toPlainText());
-    //
-    //    QTextDocument* doc = this->document();
-    //    int nCnt = doc->blockCount();
-    //    for (int i = 0; i < nCnt; ++i)
-    //    {
-    //        QTextBlock textBlock = doc->findBlockByNumber(i);
-    //        QString strtext = textBlock.text();
-    //        qDebug() << "--:" << strtext;
-    //    }
-    // 
-    //
-    //
-    //    this->clear();
-    //}
-    emit Signal_GetContent(this->toPlainText());
-    QPlainTextEdit::keyPressEvent(e);
-}
-
-void ContentEdit::contextMenuEvent(QContextMenuEvent *){
-    return;// 不要让菜单弹出，信号传递
-}
-
-
 TextEditWidget::TextEditWidget(QWidget* parent) : AutoSizeWidget(false, parent) {
     InitView();
     InitSigChannel();
@@ -252,4 +209,13 @@ void TextEditWidget::ToPixmap() {
    //     // 更新下一行的位置，加入块高度
    //     position.setY(position.y() + layout->boundingRect().height());
    // }
+}
+
+void TextEditWidget::SetFocus() {
+    setFocus();
+    edit_->setFocus();
+}
+
+void TextEditWidget::Clear() {
+    edit_->clear();
 }

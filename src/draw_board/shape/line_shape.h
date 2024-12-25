@@ -56,7 +56,7 @@ public:
         return end_pos_y_;
     }
 
-    bool HasSelected(const QPoint &pos) override;
+    //bool HasSelected(const QPoint &pos) override;
     void DrawShape(QPainter &painter) override;
     void MoveShape(const QPoint &p1,const QPoint &p2) override;
     void PaintFrame(QPainter& p) override;

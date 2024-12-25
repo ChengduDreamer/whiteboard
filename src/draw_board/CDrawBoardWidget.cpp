@@ -80,13 +80,6 @@ void CDrawBoardWidget::InitView() {
     text_btn_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     text_btn_->setStyleSheet(tool_btn_style_);
 
-   /* erasure_btn_ = new QToolButton(this);
-    erasure_btn_->setText("擦除");
-    erasure_btn_->setObjectName(QString("RotateBtn"));
-    erasure_btn_->setIcon(QIcon(QString(":/Erasure.png")));
-    erasure_btn_->setIconSize(QSize(ICON_SIZE, ICON_SIZE));
-    erasure_btn_->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);*/
-
     select_btn_ = new QToolButton(this);
     select_btn_->setText("选择");
     select_btn_->setObjectName(QString("RotateBtn"));

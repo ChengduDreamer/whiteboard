@@ -12,9 +12,7 @@ class CustomLineShape : public BaseShape
 {
 public:
     CustomLineShape();
-    CustomLineShape(QPoint& click_point, QPoint& move_point);
     ~CustomLineShape();
-    CustomLineShape(const double& start_pos_x, const double& start_pos_y, const double& end_pos_x, const double& end_pos_y);
 
     inline void SetStartPosX(const double& pos_x) { 
         start_pos_x_ = pos_x; 
@@ -59,7 +57,12 @@ public:
 
     // 存储画笔画的点
     QVector<QPoint> points_data_;
+
+
 private:
+
+   /* QPoint start_point_;*/
+
     double start_pos_x_ = 0;   // 起点横坐标
     double start_pos_y_ = 0;   // 起点纵坐标&
     double end_pos_x_ = 0;     // 终点横坐标

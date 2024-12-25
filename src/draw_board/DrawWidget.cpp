@@ -2,82 +2,9 @@
 #include <qsizepolicy.h>
 #include "shape/auto_size_widget.h"
 
-DrawWidget::DrawWidget(QWidget *parent):QOpenGLWidget(parent)
-{
-    setMouseTracking(true);
-    auto sizepolicy = this->sizePolicy();
-    sizepolicy.setHorizontalPolicy(QSizePolicy::Expanding);
-    sizepolicy.setVerticalPolicy(QSizePolicy::Expanding);
-    setSizePolicy(sizepolicy);
-
-    //m_pSystemData = SystemData::GetSystemData();
-
-    mouse_left_btn_clicked_ = false;
-    shape_type_ = EShapeType::kUnkonwn;
-
-    //m_StatusEdit.setParent(this);
-    black_pen_.setColor(QColor(0,0,0));
-    text_font_.setFamily(QStringLiteral("Microsoft YaHei"));
-    text_font_.setPixelSize(20);
-    white_brush_.setColor(QColor(255,255,255));
-    white_brush_.setStyle(Qt::BrushStyle::SolidPattern);
-    /*m_BackgroundBrush.setColor(QColor(0 ,255, 0));
-    m_BackgroundBrush.setStyle(Qt::BrushStyle::SolidPattern);*/
-    null_brush_.setStyle(Qt::BrushStyle::NoBrush);
-    //m_ErasureBrush = white_brush_;//画笔
-    //m_ErasurePen = QPen(white_brush_,10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    //    //    m_ErasurePen = QPen(QBrush(QColor(255,0,0)),10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-
-    //    DemensionsPoint.resize(3);// 确定存储三个点，没有的话就自动赋值就好了
-
-    //content_edit_.setParent(this);
-    //content_edit_.hide();
-    //content_edit_.setFont(text_font_);
-    //m_RotateType = ERotateType::Rotate_0;// 默认0度
-
-
-    text_edit_ = new TextEditWidget(this);
-    text_edit_->hide();
-    text_edit_->setFont(text_font_);
-
-
-    this->setMouseTracking(true);// 设置为不按下鼠标键触发moveEvent，对moveevent起作用
-
-    //QObject::connect(&content_edit_,SIGNAL(Signal_GetContent(QString)),this,SLOT(fn_Recv_ContentEdit_GetContent(QString)),Qt::ConnectionType::DirectConnection);
-
-    //m_StatusEdit.setGeometry(0,this->height() + 20,this->width(),20);
-    //m_StatusEdit.setStyleSheet("QLineEdit{background-color:transparent}""QLineEdit{border-width:0;border-style:outset}");
-    //connect(&m_StatusEdit,SIGNAL(textChanged(QString)),this,SLOT(fn_Change_StatusEdit_Visual(QString)),Qt::ConnectionType::DirectConnection);//有文本显示边框和背景颜色
-
-    /*TextEditWidget* ew = new TextEditWidget(this);
-
-    ew->move(200, 200);
-
-    ew->resize(200, 200);*/
-
-
-   // AutoSizeWidget* aw = new AutoSizeWidget(false, this);
-   //
-   // aw->move(100, 100);
-   //
-   // aw->resize(200, 200);
-
-    resize(800, 600);
-
-    connect(text_edit_, &TextEditWidget::SigHtml, this, [=](QString html) {
-        
-
-       // qDebug() << "text_edit_ x = " << text_point_.x() << ", y = " << text_point_.y();
-
-        qDebug() << "text_edit_ x = " << double(text_edit_->pos().x()) + 4 << ", y = " << double(text_edit_->pos().y() + 30);
-
-        
-       std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + 4, double(text_edit_->pos().y() + 30), html, this);
-       
-       shapes_.emplace_back(text_shape);
-       
-       text_edit_->hide();
-    });
+DrawWidget::DrawWidget(QWidget *parent):QOpenGLWidget(parent) {
+    InitView();
+    InitSigChannel();
 }
 
 DrawWidget::~DrawWidget()
@@ -85,32 +12,19 @@ DrawWidget::~DrawWidget()
 
 }
 
-void DrawWidget::paintEvent(QPaintEvent *event)
-{
-    QOpenGLWidget::paintEvent(event);    // 先调用再渲染
-
+void DrawWidget::paintEvent(QPaintEvent *event) {
+    QOpenGLWidget::paintEvent(event); 
     QPainter painter(this);
     painter.setBrush(white_brush_);
     painter.drawRect(rect());// 整个窗体的矩形
-    painter.setRenderHint(QPainter::Antialiasing);// 平滑曲线 防止图形走样
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);// 绘制结果 = 绘制输入，目的绘制区域原来的像素被完全覆盖。https://blog.csdn.net/yejin_tianming/article/details/105113668
-
-    painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setRenderHint(QPainter::Antialiasing);
-
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    
     // 设置画笔
     painter.setPen(black_pen_);
    // painter.setFont(text_font_);
     painter.setBrush(null_brush_);
-
-    // 这里是对去全局进行绘画
-    //int iSize = m_pSystemData->m_ShapeVec.size();
-    //
-    //// 画完容器里所有的图
-    //for(int i =0;i<iSize;++i ){
-    //    m_pSystemData->m_ShapeVec.at(i)->drawShape(painter);
-    //    //        case EShapeType::kUnkonwn:
-    //}
 
     for (auto& shape : shapes_) {
         shape->DrawShape(painter);
@@ -118,7 +32,7 @@ void DrawWidget::paintEvent(QPaintEvent *event)
 
     // 这里是对当前按下的按钮选项进行绘画
     /*if(mouse_left_btn_clicked_ || (m_DemensionBtnClicked && this->DemensionsPoint.size() == 3)){*/
-    if (mouse_left_btn_clicked_) {
+    if (mouse_left_btn_pressed_) {
         switch (shape_type_) {
         case EShapeType::kReckangle: {
             static RectangleShape rect_shape;
@@ -137,10 +51,6 @@ void DrawWidget::paintEvent(QPaintEvent *event)
             break;
         }
         case EShapeType::kText: {
-            /*text_point_ = clicked_point_;
-            content_edit_.show();
-            content_edit_.setGeometry(text_point_.x(), text_point_.y(), 200, 100);
-            painter.drawText(QPoint(text_point_.x(), text_point_.y()), content_edit_.toPlainText());*/
             break;
         }
         case EShapeType::kCustomLine: {
@@ -155,9 +65,7 @@ void DrawWidget::paintEvent(QPaintEvent *event)
 
     }
 
-
-    // 对尺寸进行标记
-
+    // 对选中的图形 绘制边框
     if(cur_select_shape_){
         cur_select_shape_->PaintFrame(painter);
     }
@@ -173,7 +81,7 @@ void DrawWidget::resizeEvent(QResizeEvent *event)
 void DrawWidget::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::MouseButton::LeftButton){
-        mouse_left_btn_clicked_ = true; // 鼠标左键按下
+        mouse_left_btn_pressed_ = true; // 鼠标左键按下
         //if(this->m_CapturePoint){ // 如果鼠标捕获了点，就直接以捕获点为绘制的点
         //    clicked_point_ = *(this->m_CapturePoint);
         //
@@ -223,7 +131,7 @@ void DrawWidget::mousePressEvent(QMouseEvent *event)
         }*/
 
         move_point_ = event->pos(); // 单击时，对移动位置进行初始化
-        cur_select_shape_  = NULL; // 每次单击，首先清空之前选中的对象
+        cur_select_shape_  = nullptr; // 每次单击，首先清空之前选中的对象
         //if(select_btn_clicked_){ // 如果选择按钮按下，需要判断是否选择对象，如果选择进行标记,选择图像进行旋转和移动
         //    int iSize = m_pSystemData->m_ShapeVec.size();
         //    for(int i =0;i<iSize;++i ){
@@ -275,11 +183,13 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
 void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::MouseButton::LeftButton){
-        mouse_left_btn_clicked_ = false;
+        mouse_left_btn_pressed_ = false;
+        cur_select_shape_ = nullptr; 
         move_point_ = event->pos();
-        if(this->cur_selected_shape_index_ == -1){
-            text_point_ = event->pos();
-        }
+
+       // if(-1 == cur_selected_shape_index_){
+       //     text_point_ = event->pos();
+       // }
 
         switch (shape_type_) {
         case EShapeType::kReckangle: {
@@ -303,18 +213,12 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
             shapes_.emplace_back(line);
             break;
         }
-        case EShapeType::kText: {  //to do 这里需要看下
+        case EShapeType::kText: { 
             text_point_ = move_point_;
-           /* content_edit_.clear();
-            content_edit_.show();
-            content_edit_.setGeometry(text_point_.x(), text_point_.y(), 200, 100);
-            content_edit_.setFocus();*/
-
+            text_edit_->Clear();
             text_edit_->show();
             text_edit_->move(text_point_);
-            text_edit_->setFocus();
-
-
+            text_edit_->SetFocus();
             break;
         }
         case EShapeType::kCustomLine: {
@@ -335,7 +239,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void DrawWidget::Revoke() {
-    shapes_.pop_back();
+    if (!shapes_.empty()) {
+        shapes_.pop_back();
+    }
     update();
 }
 
@@ -354,26 +260,45 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event)
     //this->m_CapturePoint = nullptr;
 
     // ]
-
-
+    std::shared_ptr<BaseShape> can_select_shape = nullptr;
+    bool can_selecte = false;
     for (auto& shape: shapes_) {
-    
-        //qDebug() << "EnterSelectRange :" <<  shape->EnterSelectRange(point);
+        if (shape->EnterSelectRange(point)) {
+            can_selecte = true;
+            can_select_shape = shape;
+            break;
+        }
     }
 
+    if (can_selecte) {
+        setCursor(Qt::OpenHandCursor);
+    }
+    else {
+        setCursor(Qt::ArrowCursor);
+    }
+
+    if (mouse_left_btn_pressed_) {
+        if (!cur_select_shape_) {
+            cur_select_shape_ = can_select_shape;
+        }
+        if (cur_select_shape_) {
+            cur_select_shape_->MoveShape(move_point_, event->pos());
+            shape_type_ = EShapeType::kUnkonwn;
+            update();
+        }
+    }
 
 
     // 移动选中的对象
-    if(cur_select_shape_ && mouse_left_btn_clicked_){
-        cur_select_shape_->MoveShape(move_point_, event->pos());
-        update();
-    }
+   // if(cur_select_shape_ && mouse_left_btn_pressed_){
+   //     cur_select_shape_->MoveShape(move_point_, event->pos());
+   //     update();
+   // }
     move_point_ = event->pos();
 
-    if(mouse_left_btn_clicked_) {
-        move_point_ = event->pos();
+    if(mouse_left_btn_pressed_) {
+        
         update();
-
         if (EShapeType::kCustomLine == shape_type_) {
             points_data_.append(event->pos());
         }
@@ -417,5 +342,82 @@ void DrawWidget::fn_Recv_ContentEdit_GetContent(const QString& content) {
    //
    // update();
    // this->cur_selected_shape_index_ = -1;
+}
+
+void DrawWidget::InitSigChannel() {
+    connect(text_edit_, &TextEditWidget::SigHtml, this, [=](QString html) {
+
+
+        qDebug() << "text_edit_ x = " << double(text_edit_->pos().x()) + 4 << ", y = " << double(text_edit_->pos().y() + 30);
+
+
+        std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + 4, double(text_edit_->pos().y() + 30), html, this);
+
+        shapes_.emplace_back(text_shape);
+
+        text_edit_->hide();
+    });
+}
+
+void DrawWidget::InitView() {
+    setMouseTracking(true);
+    auto sizepolicy = this->sizePolicy();
+    sizepolicy.setHorizontalPolicy(QSizePolicy::Expanding);
+    sizepolicy.setVerticalPolicy(QSizePolicy::Expanding);
+    setSizePolicy(sizepolicy);
+
+    //m_pSystemData = SystemData::GetSystemData();
+
+    mouse_left_btn_pressed_ = false;
+    shape_type_ = EShapeType::kUnkonwn;
+
+    black_pen_.setColor(QColor(0, 0, 0));
+    text_font_.setFamily(QStringLiteral("Microsoft YaHei"));
+    text_font_.setPixelSize(20);
+    white_brush_.setColor(QColor(255, 255, 255));
+    white_brush_.setStyle(Qt::BrushStyle::SolidPattern);
+   
+    null_brush_.setStyle(Qt::BrushStyle::NoBrush);
+    //m_ErasureBrush = white_brush_;//画笔
+    //m_ErasurePen = QPen(white_brush_,10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    //    //    m_ErasurePen = QPen(QBrush(QColor(255,0,0)),10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    //    DemensionsPoint.resize(3);// 确定存储三个点，没有的话就自动赋值就好了
+
+    //content_edit_.setParent(this);
+    //content_edit_.hide();
+    //content_edit_.setFont(text_font_);
+    //m_RotateType = ERotateType::Rotate_0;// 默认0度
+
+
+    text_edit_ = new TextEditWidget(this);
+    text_edit_->hide();
+    text_edit_->setFont(text_font_);
+
+
+    this->setMouseTracking(true);// 设置为不按下鼠标键触发moveEvent，对moveevent起作用
+
+    //QObject::connect(&content_edit_,SIGNAL(Signal_GetContent(QString)),this,SLOT(fn_Recv_ContentEdit_GetContent(QString)),Qt::ConnectionType::DirectConnection);
+
+    //m_StatusEdit.setGeometry(0,this->height() + 20,this->width(),20);
+    //m_StatusEdit.setStyleSheet("QLineEdit{background-color:transparent}""QLineEdit{border-width:0;border-style:outset}");
+    //connect(&m_StatusEdit,SIGNAL(textChanged(QString)),this,SLOT(fn_Change_StatusEdit_Visual(QString)),Qt::ConnectionType::DirectConnection);//有文本显示边框和背景颜色
+
+    /*TextEditWidget* ew = new TextEditWidget(this);
+
+    ew->move(200, 200);
+
+    ew->resize(200, 200);*/
+
+
+    // AutoSizeWidget* aw = new AutoSizeWidget(false, this);
+    //
+    // aw->move(100, 100);
+    //
+    // aw->resize(200, 200);
+
+    resize(800, 600);
+
+    
 }
 

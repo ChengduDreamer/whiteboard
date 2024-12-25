@@ -65,15 +65,17 @@ public:
     //存储画笔的点
     QVector<QPoint> points_data_;
 
+private:
+    void InitView();
+    void InitSigChannel();
+
 private slots:
     void fn_Recv_ContentEdit_GetContent(const QString &qstrContent);
     //void fn_Change_StatusEdit_Visual(const QString &qstrContent);
 
 private:
-    //SystemData *m_pSystemData;//数据存储的对象指针
-
     // 当前选中的对象
-    BaseShape *cur_select_shape_ = NULL;
+    std::shared_ptr<BaseShape> cur_select_shape_ = nullptr;
 
     // 文本编辑窗口
     //ContentEdit content_edit_;        
@@ -87,7 +89,7 @@ private:
     EShapeType shape_type_ = EShapeType::kUnkonwn;
 
     // 鼠标左键是否按下
-    bool mouse_left_btn_clicked_;
+    bool mouse_left_btn_pressed_ = false;
 
     //鼠标点击的坐标
     QPoint clicked_point_;            

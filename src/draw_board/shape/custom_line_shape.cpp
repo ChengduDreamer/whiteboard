@@ -9,43 +9,8 @@ CustomLineShape::CustomLineShape()
     this->end_pos_y_ = 0.0;
 }
 
-CustomLineShape::CustomLineShape(QPoint& click_point, QPoint& move_point)
-{
-    shape_type_ = EShapeType::kLine;
-    this->start_pos_x_ = double(click_point.x());
-    this->start_pos_y_ = double(click_point.y());
-    this->end_pos_x_ = double(move_point.x());
-    this->end_pos_y_ = double(move_point.y());
+CustomLineShape::~CustomLineShape() {
 
-    this->start_point_.setX(start_pos_x_);
-    this->start_point_.setY(start_pos_y_);
-    this->end_point_.setX(end_pos_x_);
-    this->end_point_.setY(end_pos_y_);
-
-    this->center_point_.setX((this->start_point_.x() + this->end_point_.x()) / 2);
-    this->center_point_.setY((this->start_point_.y() + this->end_point_.y()) / 2);
-}
-
-CustomLineShape::~CustomLineShape()
-{
-
-}
-
-CustomLineShape::CustomLineShape(const double& start_pos_x, const double& start_pos_y, const double& end_pos_x, const double& end_pos_y)
-{
-    shape_type_ = EShapeType::kCustomLine;
-    this->start_pos_x_ = start_pos_x;
-    this->start_pos_y_ = start_pos_y;
-    this->end_pos_x_ = end_pos_x;
-    this->end_pos_y_ = end_pos_y;
-
-    this->start_point_.setX(start_pos_x);
-    this->start_point_.setY(start_pos_y);
-    this->end_point_.setX(end_pos_x);
-    this->end_point_.setY(end_pos_y);
-
-    this->center_point_.setX((this->start_point_.x() + this->end_point_.x()) / 2);
-    this->center_point_.setY((this->start_point_.y() + this->end_point_.y()) / 2);
 }
 
 bool CustomLineShape::HasSelected(const QPoint& pos)
@@ -82,14 +47,24 @@ bool CustomLineShape::EnterSelectRange(const QPoint& point) {
 void CustomLineShape::DrawShape(QPainter& painter)
 {
     //painter.drawLine(this->GetStartPosX(), this->GetStartPosY(), this->GetEndPosX(), this->GetEndPosY());
-
+    painter.save();
+    //painter.translate(start_point_);
     painter.drawPolyline(points_data_);
-
+    painter.restore();
 }
 
 // 更新数据
 void CustomLineShape::MoveShape(const QPoint& curPoint, const QPoint& nextPoint) {
+
+
+    start_point_ = nextPoint;
+    
     QPoint dis = nextPoint - curPoint;
+
+    for (auto& p : points_data_) {
+        p += dis;
+    }
+    return;
     this->SetStartPosX(this->GetStartPosX() + dis.x());
     this->SetStartPosY(this->GetStartPosY() + dis.y());
     this->SetEndPosX(this->GetEndPosX() + dis.x());
@@ -104,14 +79,14 @@ void CustomLineShape::MoveShape(const QPoint& curPoint, const QPoint& nextPoint)
 }
 
 void CustomLineShape::PaintFrame(QPainter& painter) {
-    painter.save(); // 保存画笔
-    QPen frame_pen(Qt::blue, 1, Qt::DashDotLine, Qt::RoundCap);
-    painter.setPen(frame_pen);
-    painter.drawLine(start_point_.x(), start_point_.y() + 5, start_point_.x(), start_point_.y() - 5);
-    painter.drawLine(start_point_.x(), start_point_.y() - 5, end_point_.x(), end_point_.y() - 5);
-    painter.drawLine(end_point_.x(), end_point_.y() - 5, end_point_.x(), end_point_.y() + 5);
-    painter.drawLine(end_point_.x(), end_point_.y() + 5, start_point_.x(), start_point_.y() + 5);
-    painter.restore(); // 恢复画笔
+   // painter.save(); // 保存画笔
+   // QPen frame_pen(Qt::blue, 1, Qt::DashDotLine, Qt::RoundCap);
+   // painter.setPen(frame_pen);
+   // painter.drawLine(start_point_.x(), start_point_.y() + 5, start_point_.x(), start_point_.y() - 5);
+   // painter.drawLine(start_point_.x(), start_point_.y() - 5, end_point_.x(), end_point_.y() - 5);
+   // painter.drawLine(end_point_.x(), end_point_.y() - 5, end_point_.x(), end_point_.y() + 5);
+   // painter.drawLine(end_point_.x(), end_point_.y() + 5, start_point_.x(), start_point_.y() + 5);
+   // painter.restore(); // 恢复画笔
 }
 
 //void CustomLineShape::rotate(QPoint& BasePoint, double arg = 90)

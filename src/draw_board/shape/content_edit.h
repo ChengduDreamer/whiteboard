@@ -12,35 +12,14 @@
 #include <qevent.h>
 #include "auto_size_widget.h"
 
-// to do 改为可以换行的
-class ContentEdit : public QPlainTextEdit {
-    Q_OBJECT
-public:
-    ContentEdit(QWidget *parent = nullptr);
-    ~ContentEdit();
-
-    void focusOutEvent(QFocusEvent *e) override;
-
-    void keyPressEvent(QKeyEvent *e) override;
-
-    void contextMenuEvent(QContextMenuEvent *event) override;
-
-    //    void focusInEvent(QFocusEvent *) override;
-
-signals:
-    void Signal_GetContent(QString qstr);
-
-
-private:
-};
-
 class TextEditWidget : public AutoSizeWidget {
     Q_OBJECT
 public:
     TextEditWidget(QWidget* parent = nullptr);
     ~TextEditWidget();
     void InitView();
-
+    void SetFocus();
+    void Clear();
     virtual void mouseMoveEvent(QMouseEvent* event) override;
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
