@@ -65,6 +65,14 @@ public:
     //存储画笔的点
     QVector<QPoint> points_data_;
 
+    enum class EMouseState {
+        kGeneral,
+        kMoveShape,
+        kDrawShape,
+    };
+
+    EMouseState mouse_state_ = EMouseState::kGeneral;
+
 private:
     void InitView();
     void InitSigChannel();

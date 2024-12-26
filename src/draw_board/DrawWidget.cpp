@@ -32,37 +32,49 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
 
     // 这里是对当前按下的按钮选项进行绘画
     /*if(mouse_left_btn_clicked_ || (m_DemensionBtnClicked && this->DemensionsPoint.size() == 3)){*/
-    if (mouse_left_btn_pressed_) {
-        switch (shape_type_) {
-        case EShapeType::kReckangle: {
-            static RectangleShape rect_shape;
-            rect_shape.UpdateData(clicked_point_, move_point_);
-            rect_shape.DrawShape(painter);
-            break;
-        }
-        case EShapeType::kEllipse: {
-            static EllipseShape ell;
-            ell.UpdateData(clicked_point_, move_point_);
-            ell.DrawShape(painter);
-            break;
-        }
-        case EShapeType::kLine: {
-            painter.drawLine(clicked_point_, move_point_);
-            break;
-        }
-        case EShapeType::kText: {
-            break;
-        }
-        case EShapeType::kCustomLine: {
-            static CustomLineShape custom_line;
-            custom_line.points_data_ = points_data_;
-            custom_line.DrawShape(painter);
-            break;
-        }
-        default:
-            break;
-        }
+    if (EMouseState::kDrawShape == mouse_state_) {
+        if (/*EMouseState::kMoveShape != mouse_state_*/ 1) {
+            switch (shape_type_) {
+            case EShapeType::kReckangle: {
+                static RectangleShape rect_shape;
+                rect_shape.UpdateData(clicked_point_, move_point_);
+                rect_shape.DrawShape(painter);
 
+                mouse_state_ = EMouseState::kDrawShape;
+
+                break;
+            }
+            case EShapeType::kEllipse: {
+                static EllipseShape ell;
+                ell.UpdateData(clicked_point_, move_point_);
+                ell.DrawShape(painter);
+
+                mouse_state_ = EMouseState::kDrawShape;
+
+                break;
+            }
+            case EShapeType::kLine: {
+                painter.drawLine(clicked_point_, move_point_);
+
+                mouse_state_ = EMouseState::kDrawShape;
+                break;
+            }
+            case EShapeType::kText: {
+                break;
+            }
+            case EShapeType::kCustomLine: {
+                static CustomLineShape custom_line;
+                custom_line.points_data_ = points_data_;
+                custom_line.DrawShape(painter);
+
+                mouse_state_ = EMouseState::kDrawShape;
+                break;
+            }
+            default:
+                break;
+            }
+        
+        }
     }
 
     // 对选中的图形 绘制边框
@@ -81,6 +93,9 @@ void DrawWidget::resizeEvent(QResizeEvent *event)
 void DrawWidget::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::MouseButton::LeftButton){
+        // to do clear point_data
+        points_data_.clear();
+
         mouse_left_btn_pressed_ = true; // 鼠标左键按下
         //if(this->m_CapturePoint){ // 如果鼠标捕获了点，就直接以捕获点为绘制的点
         //    clicked_point_ = *(this->m_CapturePoint);
@@ -89,73 +104,24 @@ void DrawWidget::mousePressEvent(QMouseEvent *event)
         //    clicked_point_ = event->pos();// 设置按下的位置
         //}
         clicked_point_ = event->pos();
-        // 旋转需要执行的操作
-        //if(this->m_RotateBtnClicked){
-        //    QStringList rotateArgList = this->m_StatusEdit.text().split(":");
-        //    //            for(auto st : rotateArgList){
-        //    //                qDebug() << st;
-        //    //            }
-        //    //            qDebug() << rotateArgList.length();
-        //    QString rotateArg = rotateArgList.at(rotateArgList.length()-1);
-        //    bool isDigit = false;
-        //    double arg = 90;
-        //    double temp = rotateArg.toDouble(&isDigit);
-        //    if(isDigit){
-        //        arg = temp;
-        //        //                qDebug() << QString("this arg")<< QString("%1").arg(arg);
-        //    }
-        //    //this->m_StartingClickPoint = &clicked_point_;
-        //    this->cur_select_shape_->rotate(clicked_point_,arg);
-        //    this->m_RotateBtnClicked = false;
-        //    this->m_StatusEdit.clear();
-        //}
 
-        // 这里是对鼠标标注的操作
-        //if(this->m_DemensionBtnClicked){
-        //    //            qDebug() << QString("this->DemensionsPoint.size() press in:") <<  this->DemensionsPoint.size();
-        //    this->DemensionsPoint.push_back(clicked_point_);
-        //    if(this->DemensionsPoint.size() == 1){
-        //        this->m_StatusEdit.setText("Select the second point of the object");
-        //    }
-        //    else if(this->DemensionsPoint.size() == 2){
-        //        this->m_StatusEdit.setText("Please select a location for demensions");
-        //    }else if(this->DemensionsPoint.size() == 4){
-        //        this->DemensionsPoint.pop_back();
-        //        this->DemensionsPoint.resize(3);
-        //        this->m_StatusEdit.clear();
-        //    }
-        //    //            qDebug() << QString("this->DemensionsPoint.size() press out:") <<  this->DemensionsPoint.size();
-        //}
-       /* if(!this->m_DemensionBtnClicked && !DemensionsPoint.empty()){
-            this->m_StatusEdit.clear();
-        }*/
-
+        // 鼠标摁下时候 判断 是拖拽 还是 绘制
+        //std::shared_ptr<BaseShape> can_select_shape = nullptr;
+        for (auto& shape : shapes_) {
+            if (shape->EnterSelectRange(clicked_point_)) {
+                mouse_state_ = EMouseState::kMoveShape;
+                //can_select_shape = shape;
+                cur_select_shape_ = shape;
+                break;
+            }
+        }
+        if (mouse_state_ != EMouseState::kMoveShape) {
+            if (EShapeType::kUnkonwn != shape_type_) {
+                mouse_state_ = EMouseState::kDrawShape;
+            }
+        }
         move_point_ = event->pos(); // 单击时，对移动位置进行初始化
-        cur_select_shape_  = nullptr; // 每次单击，首先清空之前选中的对象
-        //if(select_btn_clicked_){ // 如果选择按钮按下，需要判断是否选择对象，如果选择进行标记,选择图像进行旋转和移动
-        //    int iSize = m_pSystemData->m_ShapeVec.size();
-        //    for(int i =0;i<iSize;++i ){
-        //        if(cur_select_shape_){ // 判断是否已经有了选中的图形
-        //            break;
-        //        }
-        //        if(this->double_clicked_){ // 如果进行了双击，第二次不要操作，否则文字选中会有边框
-        //            this->double_clicked_ = false;
-        //            this->cur_select_shape_ = NULL;
-        //            break;
-        //        }
-        //        //                qDebug()<<i;
-        //        BaseShape * pShape= m_pSystemData->m_ShapeVec.at(i);
-        //        if(pShape->HasSelected(clicked_point_)){ // 如果点击了当前的图形，进行赋值
-        //            cur_select_shape_ = pShape;
-        //            this->cur_selected_shape_index_ = i;
-        //        }
-        //    }
-        //}
-
-       /* if(this->m_DemensionBtnClicked == true && shape_type_ != EShapeType::Shape_Demensions ){
-            this->m_DemensionBtnClicked = false;
-            this->DemensionsPoint.clear();
-        }*/
+       
     }
     QOpenGLWidget::mousePressEvent(event);
 }
@@ -163,22 +129,6 @@ void DrawWidget::mousePressEvent(QMouseEvent *event)
 
 void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    //if(event->button() == Qt::MouseButton::LeftButton){
-    //    if(cur_select_shape_ && cur_select_shape_->GetShapeType() == EShapeType::kText){
-    //        this->double_clicked_ = true; // 确定当前是双击，防止单击继续操作
-    //        TextShape* text_shape = dynamic_cast<TextShape*>(cur_select_shape_); // 获取当前选中的文字框的信息
-    //        text_point_ = QPoint(text_shape->GetStartPosX(), text_shape->GetStartPosY());
-    //        content_edit_.show();
-    //        cur_select_shape_ = NULL;
-    //        update();
-    //        //            qDebug()<<"update";
-    //        content_edit_.setGeometry(text_point_.x()-3,text_point_.y()-22.5,200,30);
-    //        content_edit_.setPlainText(text_shape->GetContent());
-    //    }
-    //}
-
-
-
     if(event->button() == Qt::MouseButton::LeftButton){
         QPoint point = event->pos();
         std::shared_ptr<BaseShape> can_select_shape = nullptr;
@@ -221,54 +171,58 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
     if(event->button() == Qt::MouseButton::LeftButton){
         mouse_left_btn_pressed_ = false;
         cur_select_shape_ = nullptr; 
+        
         move_point_ = event->pos();
 
        // if(-1 == cur_selected_shape_index_){
        //     text_point_ = event->pos();
        // }
-
-        switch (shape_type_) {
-        case EShapeType::kReckangle: {
-            int min_x = clicked_point_.x() < move_point_.x()?clicked_point_.x():move_point_.x();
-            int min_y = clicked_point_.y() < move_point_.y()?clicked_point_.y():move_point_.y();
-            QPoint dis = move_point_ - clicked_point_;
-            std::shared_ptr<RectangleShape> rect = std::make_shared<RectangleShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
-            shapes_.emplace_back(rect);
-            break;
-        }
-        case EShapeType::kEllipse: {
-            int min_x = clicked_point_.x() < move_point_.x()?clicked_point_.x():move_point_.x();
-            int min_y = clicked_point_.y() < move_point_.y()?clicked_point_.y():move_point_.y();
-            QPoint dis = move_point_ - clicked_point_;
-            std::shared_ptr<EllipseShape> elli = std::make_shared<EllipseShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
-            shapes_.emplace_back(elli);
-            break;
-        }
-        case EShapeType::kLine: {
-            std::shared_ptr<LineShape> line = std::make_shared<LineShape>(double(clicked_point_.x()), double(clicked_point_.y()), double(move_point_.x()), double(move_point_.y()));   
-            shapes_.emplace_back(line);
-            break;
-        }
-        case EShapeType::kText: { 
-            text_point_ = move_point_;
-            text_edit_->Clear();
-            text_edit_->show();
-            text_edit_->move(text_point_);
-            text_edit_->SetFocus();
-            break;
-        }
-        case EShapeType::kCustomLine: {
-            if (points_data_.size() >= 10) {
-                std::shared_ptr<CustomLineShape> cli = std::make_shared<CustomLineShape>();
-                cli->points_data_ = points_data_;
-                shapes_.emplace_back(cli);
-                points_data_.clear();
+        if (EMouseState::kDrawShape == mouse_state_) {
+            switch (shape_type_) {
+            case EShapeType::kReckangle: {
+                int min_x = clicked_point_.x() < move_point_.x() ? clicked_point_.x() : move_point_.x();
+                int min_y = clicked_point_.y() < move_point_.y() ? clicked_point_.y() : move_point_.y();
+                QPoint dis = move_point_ - clicked_point_;
+                std::shared_ptr<RectangleShape> rect = std::make_shared<RectangleShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
+                shapes_.emplace_back(rect);
                 break;
             }
+            case EShapeType::kEllipse: {
+                int min_x = clicked_point_.x() < move_point_.x() ? clicked_point_.x() : move_point_.x();
+                int min_y = clicked_point_.y() < move_point_.y() ? clicked_point_.y() : move_point_.y();
+                QPoint dis = move_point_ - clicked_point_;
+                std::shared_ptr<EllipseShape> elli = std::make_shared<EllipseShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
+                shapes_.emplace_back(elli);
+                break;
+            }
+            case EShapeType::kLine: {
+                std::shared_ptr<LineShape> line = std::make_shared<LineShape>(double(clicked_point_.x()), double(clicked_point_.y()), double(move_point_.x()), double(move_point_.y()));
+                shapes_.emplace_back(line);
+                break;
+            }
+            case EShapeType::kText: {
+                text_point_ = move_point_;
+                text_edit_->Clear();
+                text_edit_->show();
+                text_edit_->move(text_point_);
+                text_edit_->SetFocus();
+                break;
+            }
+            case EShapeType::kCustomLine: {
+                if (points_data_.size() >= 10) {
+                    std::shared_ptr<CustomLineShape> cli = std::make_shared<CustomLineShape>();
+                    cli->points_data_ = points_data_;
+                    shapes_.emplace_back(cli);
+                    points_data_.clear();
+                    break;
+                }
+            }
+            default:
+                break;
+            }
+        
         }
-        default:
-            break;
-        }
+        mouse_state_ = EMouseState::kGeneral;
     }
     update();
     QOpenGLWidget::mouseReleaseEvent(event);
@@ -296,33 +250,66 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event)
     //this->m_CapturePoint = nullptr;
 
     // ]
-    std::shared_ptr<BaseShape> can_select_shape = nullptr;
+   
     bool can_selecte = false;
     for (auto& shape: shapes_) {
         if (shape->EnterSelectRange(point)) {
-            can_selecte = true;
-            can_select_shape = shape;
+            can_selecte = true; 
             break;
         }
     }
 
-    if (can_selecte) {
+
+    switch (mouse_state_)
+    {
+    case DrawWidget::EMouseState::kGeneral:
+        if (can_selecte) {
+            setCursor(Qt::OpenHandCursor);
+        }
+        else {
+            if (EShapeType::kUnkonwn == shape_type_) {
+                setCursor(Qt::ArrowCursor);
+            }
+            else {
+                setCursor(Qt::CrossCursor);
+            }
+        }
+        break;
+    case DrawWidget::EMouseState::kMoveShape:
+        setCursor(Qt::OpenHandCursor);
+        if (cur_select_shape_) {
+            cur_select_shape_->MoveShape(move_point_, event->pos());
+            //shape_type_ = EShapeType::kUnkonwn;
+            update();
+        }
+        break;
+    case DrawWidget::EMouseState::kDrawShape:
+        setCursor(Qt::CrossCursor);
+        break;
+    default:
+        setCursor(Qt::ArrowCursor);
+        break;
+    }
+
+    /*if (can_selecte) {
         setCursor(Qt::OpenHandCursor);
     }
     else {
-        setCursor(Qt::ArrowCursor);
-    }
+        if (EShapeType::kUnkonwn == shape_type_) {
+            setCursor(Qt::ArrowCursor);
+        }
+        else {
+            setCursor(Qt::CrossCursor);
+        }
+    }*/
 
-    if (mouse_left_btn_pressed_) {
-        if (!cur_select_shape_) {
-            cur_select_shape_ = can_select_shape;
-        }
-        if (cur_select_shape_) {
-            cur_select_shape_->MoveShape(move_point_, event->pos());
-            shape_type_ = EShapeType::kUnkonwn;
-            update();
-        }
-    }
+    //if (mouse_left_btn_pressed_) {
+    //    if (cur_select_shape_) {
+    //        cur_select_shape_->MoveShape(move_point_, event->pos());
+    //        //shape_type_ = EShapeType::kUnkonwn;
+    //        update();
+    //    }
+    //}
 
 
     // 移动选中的对象

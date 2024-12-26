@@ -1,16 +1,15 @@
 #pragma once
-#include <QLineEdit>
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QContextMenuEvent>
 #include <QWidget>
 #include <QMouseEvent>
 #include <qtextedit.h>
-#include <qplaintextedit.h>
-#include <qtoolbutton.h>
 #include <QTextBlock>
 #include <qevent.h>
 #include "auto_size_widget.h"
+
+class YKIconButton;
 
 class TextEditWidget : public AutoSizeWidget {
     Q_OBJECT
@@ -25,23 +24,22 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
     
     void SetHtml(const QString& html);
+    int GetTitleBarHeight();
 Q_SIGNALS:
     //void SigTextDocument(QTextDocument* text_doc);
 
     //void SigTextEdit(QTextEdit);
 
     void SigHtml(QString);
-
+    void SigCancel();
+    
 private:
-    void ToPixmap();
     void InitSigChannel();
 private:
     QWidget* title_bar_ = nullptr;
-
-    QToolButton* close_btn_ = nullptr;
+    YKIconButton* close_btn_ = nullptr;
     QTextEdit* edit_ = nullptr;
-    QToolButton* delete_all_btn_ = nullptr;
-    QToolButton* ok_btn_ = nullptr;
+    YKIconButton* ok_btn_ = nullptr;
 
 
     bool pressed_ = false;
@@ -51,7 +49,7 @@ private:
     QPoint point_;
 
    
-
+    int title_bar_height_ = 30;
 
 
 };
