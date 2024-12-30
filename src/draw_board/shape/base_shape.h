@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QPoint>
 
-const double PI = 3.1415926/180;
+//const double PI = 3.1415926/180;
 
 enum class EShapeType
 {

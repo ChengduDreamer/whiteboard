@@ -141,11 +141,9 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
         if (can_select_shape) {
             if (EShapeType::kText == can_select_shape->GetShapeType()) {
-            
                 editing_text_shape_ = std::dynamic_pointer_cast<TextShape>(can_select_shape);
                 editing_text_shape_->SetHiden(true);
                 //text_edit_->Clear();
-     
                 qDebug() << "html : " << editing_text_shape_->GetHtml();
                 text_edit_->SetHtml(editing_text_shape_->GetHtml());
                 text_edit_->show();
@@ -154,14 +152,7 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
                 text_edit_->move(point);
             }
         }
-
-
-
-
     }
-
-
-
 
     QOpenGLWidget::mouseDoubleClickEvent(event);
 }
@@ -173,10 +164,6 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
         cur_select_shape_ = nullptr; 
         
         move_point_ = event->pos();
-
-       // if(-1 == cur_selected_shape_index_){
-       //     text_point_ = event->pos();
-       // }
         if (EMouseState::kDrawShape == mouse_state_) {
             switch (shape_type_) {
             case EShapeType::kReckangle: {
@@ -236,21 +223,9 @@ void DrawWidget::Revoke() {
 }
 
 // 本窗口鼠标移动事件
-void DrawWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    // 鼠标进行实时捕获，判断是否是在某个点的范围内
-    QPoint point = event->pos();
-   // this->mouseOnOnePoint(point);
-    //if(this->m_CapturePoint){
-    //    //        qDebug()<<"已经在点中了";
-    //    this->setCursor(Qt::CrossCursor);
-    //}else{
-    //    this->setCursor(Qt::ArrowCursor);  //范围之外变回原来形状  https://blog.csdn.net/technologyleader/article/details/82981718
-    //}
-    //this->m_CapturePoint = nullptr;
-
-    // ]
+void DrawWidget::mouseMoveEvent(QMouseEvent *event) {
    
+    QPoint point = event->pos();
     bool can_selecte = false;
     for (auto& shape: shapes_) {
         if (shape->EnterSelectRange(point)) {
@@ -331,42 +306,6 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event)
 }
 
 
-// 文本编辑事件
-void DrawWidget::fn_Recv_ContentEdit_GetContent(const QString& content) {
-
-    if (content.isEmpty()) {
-        return;
-    }
-
-    //if (this->cur_selected_shape_index_ != -1) {
-    //    TextData* pText = new TextData(double(text_point_.x()), double(text_point_.y()), qstrContent);
-    //    m_pSystemData->m_ShapeVec[this->cur_selected_shape_index_] = pText;
-    //    //            qDebug()<<"m_pSystemData->m_ShapeVec[this->cur_selected_shape_index_] = pText;";
-    //}
-    //else {
-    //    //            qDebug()<<" m_pSystemData->m_ShapeVec.push_back(pText);";
-    //    TextData* pText = new TextData(double(text_point_.x()) + 3, double(text_point_.y() + 22.5), qstrContent);
-    //    //            m_pSystemData->m_ShapeVec.pop_back();
-    //    m_pSystemData->m_ShapeVec.push_back(pText);
-    //}
-
-   // std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_point_.x()) + 3, double(text_point_.y() + 22.5), content, this);
-   // 
-   // shapes_.emplace_back(text_shape);
-   // 
-   // qDebug() << "recv content";
-   // 
-   // if (content.indexOf("\n") != -1) //数据中有\n，插入\r; 怎么应对一个以上的换行?
-   // {
-   //     qDebug() << "content have \n";
-   // }
-   //
-   //
-   //
-   // update();
-   // this->cur_selected_shape_index_ = -1;
-}
-
 void DrawWidget::InitSigChannel() {
     connect(text_edit_, &TextEditWidget::SigHtml, this, [=](QString html) {
         qDebug() << "text_edit_ x = " << double(text_edit_->pos().x()) + 4 << ", y = " << double(text_edit_->pos().y() + 30);
@@ -381,6 +320,16 @@ void DrawWidget::InitSigChannel() {
             shapes_.emplace_back(text_shape);
         }
         text_edit_->hide();
+    });
+
+    connect(text_edit_, &TextEditWidget::SigCancel, this, [=]() {
+        text_edit_->Clear();
+        text_edit_->hide();
+        if (editing_text_shape_) {  // 如果是正在编辑的，就再显示回来
+            editing_text_shape_->SetHiden(false);
+            editing_text_shape_->SetStartPoint({ text_edit_->pos().x() + 4, text_edit_->pos().y() + 30 });
+            editing_text_shape_ = nullptr;
+        }
     });
 }
 

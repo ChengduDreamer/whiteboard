@@ -14,7 +14,7 @@ set(DRAW_BOARD_SOURCES
 	shape/text_shape.cpp
 	shape/custom_line_shape.cpp
 	shape/auto_size_widget.cpp
-	draw_board.qrc
+	
 )
 
 add_library(draw_board STATIC ${DRAW_BOARD_SOURCES})

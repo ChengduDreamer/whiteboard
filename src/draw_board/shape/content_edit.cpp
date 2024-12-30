@@ -18,6 +18,8 @@ TextEditWidget::~TextEditWidget() {
 
 void TextEditWidget::InitView() {
     setMouseTracking(true);
+    setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("background-color:#ddeeff;");
 
     auto main_vlayout = new QVBoxLayout(bak_);
     main_vlayout->setAlignment(Qt::AlignTop);
@@ -31,37 +33,31 @@ void TextEditWidget::InitView() {
     title_hlayout->setAlignment(Qt::AlignTop);
     title_hlayout->setContentsMargins(0, 0, 0, 0);
     title_hlayout->setSpacing(0);
+
+    ok_btn_ = new YKIconButton();
+    ok_btn_->Init(QSize(30, 30), ":/draw_board/image/ok_normal.svg", ":/draw_board/image/ok_hover.svg", ":/draw_board/image/ok_press.svg");
+    ok_btn_->SetUseSvg(true);
+
     close_btn_ = new YKIconButton();
-    close_btn_->Init(QSize(30, 30), ":/draw_board_res/close_normal.svg", ":/draw_board_res/close_hover.svg", ":/draw_board_res/close_press.svg");
+    close_btn_->Init(QSize(30, 30), ":/draw_board/image/close_normal.svg", ":/draw_board/image/close_hover.svg", ":/draw_board/image/close_press.svg");
     close_btn_->SetUseSvg(true);
     title_hlayout->addStretch(1);
+
+    title_hlayout->addWidget(ok_btn_);
+    title_hlayout->addSpacing(8);
     title_hlayout->addWidget(close_btn_);
 
     main_vlayout->addWidget(title_bar_);
 
     auto edit_hlayout = new QHBoxLayout();
-    edit_hlayout->setContentsMargins(0, 0, 0, 0);
+    edit_hlayout->setContentsMargins(6, 0, 6, 6);
     edit_ = new QTextEdit();
+    edit_->setStyleSheet("background-color:#ffffff;");
     auto edit_size_policy = edit_->sizePolicy();
     edit_size_policy.setHorizontalPolicy(QSizePolicy::Expanding);
     edit_size_policy.setVerticalPolicy(QSizePolicy::Expanding);
     edit_hlayout->addWidget(edit_);
     main_vlayout->addLayout(edit_hlayout);
-
-    auto btn_hlayout = new QHBoxLayout();
-    btn_hlayout->setAlignment(Qt::AlignTop);
-    btn_hlayout->setContentsMargins(0, 0, 0, 0);
-    btn_hlayout->setSpacing(0);
-
-    ok_btn_ = new YKIconButton();
-    ok_btn_->Init(QSize(30, 30), ":/draw_board_res/ok_normal.svg", ":/draw_board_res/ok_hover.svg", ":/draw_board_res/ok_press.svg");
-    ok_btn_->SetUseSvg(true);
-
-    btn_hlayout->addStretch(1);
-    btn_hlayout->addWidget(ok_btn_);
-    btn_hlayout->addSpacing(8);
-
-    main_vlayout->addLayout(btn_hlayout);
 }
 
 
@@ -101,7 +97,15 @@ void TextEditWidget::mousePressEvent(QMouseEvent* event) {
 
 void TextEditWidget::InitSigChannel() {
     connect(ok_btn_, &QPushButton::clicked, this, [=]() {
+        if (edit_->toPlainText().isEmpty()) {
+            emit SigCancel();
+            return;
+        }
         emit SigHtml(edit_->toHtml());
+    });
+
+    connect(close_btn_, &QPushButton::clicked, this, [=]() {
+        emit SigCancel();
     });
 }
 

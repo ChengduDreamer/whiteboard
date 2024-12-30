@@ -52,6 +52,7 @@ set(src_SOURCES
 	src/main.cpp
 	ico.rc
 	resources.qrc
+	src/draw_board/draw_board.qrc
 )
 
 set(unit_test_01_SOURCES

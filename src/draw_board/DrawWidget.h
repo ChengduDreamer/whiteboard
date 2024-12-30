@@ -77,10 +77,6 @@ private:
     void InitView();
     void InitSigChannel();
 
-private slots:
-    void fn_Recv_ContentEdit_GetContent(const QString &qstrContent);
-    //void fn_Change_StatusEdit_Visual(const QString &qstrContent);
-
 private:
     // 当前选中的对象
     std::shared_ptr<BaseShape> cur_select_shape_ = nullptr;

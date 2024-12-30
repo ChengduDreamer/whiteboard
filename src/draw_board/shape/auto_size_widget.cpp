@@ -32,7 +32,6 @@ AutoSizeWidget::AutoSizeWidget(bool EnabledShadow,QWidget *parent)
 
 		QGridLayout *lo = new QGridLayout(this);
 		lo->addWidget(bak_, 0, 0);
-		//lo->setContentsMargins(4, 4, 4, 4); // 注意和阴影大小的协调
 		lo->setContentsMargins(8, 8, 8, 8); // 注意和阴影大小的协调
 		mGridLayout = lo;
 	}

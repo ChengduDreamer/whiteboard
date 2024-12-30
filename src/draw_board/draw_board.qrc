@@ -1,10 +1,10 @@
 <RCC>
-    <qresource prefix="/">
-		<file>draw_board_res/close_hover.svg</file>
-		<file>draw_board_res/close_normal.svg</file>
-		<file>draw_board_res/close_press.svg</file>
-		<file>draw_board_res/ok_hover.svg</file>
-		<file>draw_board_res/ok_normal.svg</file>
-		<file>draw_board_res/ok_press.svg</file>
+    <qresource prefix="/draw_board">
+		<file>image/close_hover.svg</file>
+		<file>image/close_normal.svg</file>
+		<file>image/close_press.svg</file>
+		<file>image/ok_hover.svg</file>
+		<file>image/ok_normal.svg</file>
+		<file>image/ok_press.svg</file>
     </qresource>
 </RCC>
