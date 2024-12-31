@@ -6,5 +6,28 @@
 		<file>image/ok_hover.svg</file>
 		<file>image/ok_normal.svg</file>
 		<file>image/ok_press.svg</file>
+
+		<file>image/oper_icon/backspace_hover.svg</file>
+		<file>image/oper_icon/backspace_normal.svg</file>
+		<file>image/oper_icon/backspace_press.svg</file>
+		<file>image/oper_icon/circle_hover.svg</file>
+		<file>image/oper_icon/circle_normal.svg</file>
+		<file>image/oper_icon/circle_press.svg</file>
+		<file>image/oper_icon/delete_element_hover.svg</file>
+		<file>image/oper_icon/delete_element_normal.svg</file>
+		<file>image/oper_icon/delete_element_press.svg</file>
+		<file>image/oper_icon/draw_pen_hover.svg</file>
+		<file>image/oper_icon/draw_pen_normal.svg</file>
+		<file>image/oper_icon/draw_pen_press.svg</file>
+		<file>image/oper_icon/line_hover.svg</file>
+		<file>image/oper_icon/line_normal.svg</file>
+		<file>image/oper_icon/line_press.svg</file>
+		<file>image/oper_icon/rectangle_hover.svg</file>
+		<file>image/oper_icon/rectangle_normal.svg</file>
+		<file>image/oper_icon/rectangle_press.svg</file>
+		<file>image/oper_icon/text_edit_hover.svg</file>
+		<file>image/oper_icon/text_edit_normal.svg</file>
+		<file>image/oper_icon/text_edit_press.svg</file>
+		
     </qresource>
 </RCC>

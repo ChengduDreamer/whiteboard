@@ -296,6 +296,7 @@ void DrawWidget::InitView() {
     draw_shape_type_ = EShapeType::kUnkonwn;
 
     black_pen_.setColor(QColor(0, 0, 0));
+    black_pen_.setWidth(2);
     text_font_.setFamily(QStringLiteral("Microsoft YaHei"));
     text_font_.setPixelSize(20);
     white_brush_.setColor(QColor(255, 255, 255));

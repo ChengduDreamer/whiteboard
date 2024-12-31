@@ -4,6 +4,7 @@
 class QButtonGroup;
 class QToolButton;
 class DrawWidget;
+class YKIconButton;
 
 class DrawBoardWidget : public QWidget
 {
@@ -21,7 +22,7 @@ public slots:
     void OnEllipseBtnClicked();
     void OnLineBtnClicked();
     void OnTextBtnClicked();   
-    void OnSelectBtnClicked();
+    void OnDeleteBtnClicked();
     void OnRevokeBtnClicked();
     void OnCustomLineBtnClicked();
 private:
@@ -30,15 +31,15 @@ private:
 private:
     QString content_text_;                         
 
-    QToolButton* ellipase_btn_ = nullptr;          
-    QToolButton* rectangle_btn_ = nullptr;         
-    QToolButton* line_btn_ = nullptr;              
-    QToolButton* custom_line_btn_ = nullptr;       
-    QToolButton* text_btn_ = nullptr;                 
-    QToolButton* revoke_btn_ = nullptr;            
+    YKIconButton* ellipase_btn_ = nullptr;          
+    YKIconButton* rectangle_btn_ = nullptr;         
+    YKIconButton* line_btn_ = nullptr;              
+    YKIconButton* custom_line_btn_ = nullptr;       
+    YKIconButton* text_btn_ = nullptr;                 
+    YKIconButton* revoke_btn_ = nullptr;            
     QButtonGroup* btn_group_ = nullptr;
 
-    QToolButton* select_btn_ = nullptr;            
+    YKIconButton* delete_btn_ = nullptr;
     DrawWidget* draw_widget_;                     
 private:
     QString tool_btn_style_;

@@ -50,9 +50,6 @@ public:
 
     //撤销操作
     void Revoke();
-
-    //是否是选择状态
-    bool select_btn_clicked_ = false;
  
     //存储画笔的点
     QVector<QPoint> points_data_;
