@@ -4,8 +4,8 @@
 find_package(Qt5 COMPONENTS OpenGL REQUIRED)
 
 set(DRAW_BOARD_SOURCES
-	CDrawBoardWidget.cpp
-	DrawWidget.cpp
+	draw_board_widget.cpp
+	draw_widget.cpp
 	shape/content_edit.cpp
 	shape/ellipse_shape.cpp
 	shape/line_shape.cpp

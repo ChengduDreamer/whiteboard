@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <qfile.h>
-#include "draw_board/CDrawBoardWidget.h"
+#include "draw_board/draw_board_widget.h"
 
 //using namespace yk;
 // to do 
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
     
  
-    CDrawBoardWidget w;
+    DrawBoardWidget w;
     w.show();
 
     return a.exec();
