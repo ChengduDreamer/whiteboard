@@ -1,6 +1,7 @@
 #include "DrawWidget.h"
 #include <qsizepolicy.h>
 #include "shape/auto_size_widget.h"
+#include "shape/shape_const_def.h"
 
 DrawWidget::DrawWidget(QWidget *parent):QOpenGLWidget(parent) {
     InitView();
@@ -64,7 +65,7 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
             }
             case EShapeType::kCustomLine: {
                 static CustomLineShape custom_line;
-                custom_line.points_data_ = points_data_;
+                custom_line.SetPointsData(points_data_);
                 custom_line.DrawShape(painter);
 
                 mouse_state_ = EMouseState::kDrawShape;
@@ -148,8 +149,9 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event)
                 text_edit_->SetHtml(editing_text_shape_->GetHtml());
                 text_edit_->show();
                 auto point = editing_text_shape_->start_point_;
-                point.setY(point.y() - 30);
-                text_edit_->move(point);
+                point.setX(point.x() - kTextEditContentMargin);
+                point.setY(point.y() - kTextEditTitleBarHeight);
+                text_edit_->move(point.toPoint());
             }
         }
     }
@@ -170,7 +172,7 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
                 int min_x = clicked_point_.x() < move_point_.x() ? clicked_point_.x() : move_point_.x();
                 int min_y = clicked_point_.y() < move_point_.y() ? clicked_point_.y() : move_point_.y();
                 QPoint dis = move_point_ - clicked_point_;
-                std::shared_ptr<RectangleShape> rect = std::make_shared<RectangleShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
+                std::shared_ptr<RectangleShape> rect = RectangleShape::Make(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
                 shapes_.emplace_back(rect);
                 break;
             }
@@ -178,12 +180,13 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
                 int min_x = clicked_point_.x() < move_point_.x() ? clicked_point_.x() : move_point_.x();
                 int min_y = clicked_point_.y() < move_point_.y() ? clicked_point_.y() : move_point_.y();
                 QPoint dis = move_point_ - clicked_point_;
-                std::shared_ptr<EllipseShape> elli = std::make_shared<EllipseShape>(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
+                std::shared_ptr<EllipseShape> elli = EllipseShape::Make(double(min_x), double(min_y), qAbs(double(dis.x())), qAbs(double(dis.y())));
                 shapes_.emplace_back(elli);
                 break;
             }
             case EShapeType::kLine: {
-                std::shared_ptr<LineShape> line = std::make_shared<LineShape>(double(clicked_point_.x()), double(clicked_point_.y()), double(move_point_.x()), double(move_point_.y()));
+                //std::shared_ptr<LineShape> line = std::make_shared<LineShape>(double(clicked_point_.x()), double(clicked_point_.y()), double(move_point_.x()), double(move_point_.y()));
+                std::shared_ptr<LineShape> line = LineShape::Make(clicked_point_, move_point_);
                 shapes_.emplace_back(line);
                 break;
             }
@@ -196,9 +199,8 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
                 break;
             }
             case EShapeType::kCustomLine: {
-                if (points_data_.size() >= 10) {
-                    std::shared_ptr<CustomLineShape> cli = std::make_shared<CustomLineShape>();
-                    cli->points_data_ = points_data_;
+                if (points_data_.size() >= 2) {
+                    std::shared_ptr<CustomLineShape> cli = CustomLineShape::Make(points_data_);
                     shapes_.emplace_back(cli);
                     points_data_.clear();
                     break;
@@ -312,11 +314,15 @@ void DrawWidget::InitSigChannel() {
         if(editing_text_shape_) {  // 如果是正在编辑的，就修改编辑的textshape
             editing_text_shape_->SetHtml(html);
             editing_text_shape_->SetHiden(false);
-            editing_text_shape_->SetStartPoint({ text_edit_->pos().x() + 4, text_edit_->pos().y() + 30 });
+            editing_text_shape_->SetStartPoint(QPoint(text_edit_->pos().x() + kTextEditContentMargin, text_edit_->pos().y() + kTextEditTitleBarHeight));
             editing_text_shape_ = nullptr;
         }
         else {
-            std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + 4, double(text_edit_->pos().y() + 30), html, this);
+
+            std::shared_ptr<TextShape> text_shape = TextShape::Make(QPoint(text_edit_->pos().x() + kTextEditContentMargin, text_edit_->pos().y() + kTextEditTitleBarHeight), html, this);
+
+
+            //std::shared_ptr<TextShape> text_shape = std::make_shared<TextShape>(double(text_edit_->pos().x()) + kTextEditContentMargin, double(text_edit_->pos().y() + kTextEditTitleBarHeight), html, this);
             shapes_.emplace_back(text_shape);
         }
         text_edit_->hide();
@@ -327,7 +333,7 @@ void DrawWidget::InitSigChannel() {
         text_edit_->hide();
         if (editing_text_shape_) {  // 如果是正在编辑的，就再显示回来
             editing_text_shape_->SetHiden(false);
-            editing_text_shape_->SetStartPoint({ text_edit_->pos().x() + 4, text_edit_->pos().y() + 30 });
+            editing_text_shape_->SetStartPoint(QPoint{ text_edit_->pos().x() + kTextEditContentMargin, text_edit_->pos().y() + kTextEditTitleBarHeight });
             editing_text_shape_ = nullptr;
         }
     });

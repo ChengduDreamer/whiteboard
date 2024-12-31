@@ -14,47 +14,45 @@ struct LineArgument {
     double C; // C = X2*Y1 - X1*Y2
 };
 
-
-
 class LineShape : public BaseShape
 {
 public:
-    LineShape();
-    LineShape(QPoint &click_point, QPoint &move_point);
+    static std::shared_ptr<LineShape> Make(const QPointF& click_point, const QPointF& move_point);
+    LineShape(const QPointF& click_point, const QPointF& move_point);
     ~LineShape();
-    LineShape(const double& start_pos_x, const double& start_pos_y, const double& end_pos_x, const double& end_pos_y);
+    //LineShape(const double& start_pos_x, const double& start_pos_y, const double& end_pos_x, const double& end_pos_y);
 
-    inline void SetStartPosX(const double& pos_x) {
-        start_pos_x_ = pos_x;
-    }
-
-    inline void SetStartPosY(const double& pos_y) {
-        start_pos_y_ = pos_y;
-    }
-
-    inline void SetEndPosX(const double &dWidth) {
-        end_pos_x_ = dWidth;
-    }
-
-    inline void SetEndPosY(const double &dHeight) {
-        end_pos_y_ = dHeight;
-    }
-
-    inline const double &GetStartPosX() const {
-        return start_pos_x_;
-    }
-
-    inline const double &GetStartPosY() const {
-        return start_pos_y_;
-    }
-
-    inline const double &GetEndPosX() const {
-        return end_pos_x_;
-    }
-
-    inline const double &GetEndPosY() const {
-        return end_pos_y_;
-    }
+    //void SetStartPosX(const double& pos_x) {
+    //    start_pos_x_ = pos_x;
+    //}
+    //
+    //inline void SetStartPosY(const double& pos_y) {
+    //    start_pos_y_ = pos_y;
+    //}
+    //
+    //inline void SetEndPosX(const double &dWidth) {
+    //    end_pos_x_ = dWidth;
+    //}
+    //
+    //inline void SetEndPosY(const double &dHeight) {
+    //    end_pos_y_ = dHeight;
+    //}
+    //
+    //inline const double &GetStartPosX() const {
+    //    return start_pos_x_;
+    //}
+    //
+    //inline const double &GetStartPosY() const {
+    //    return start_pos_y_;
+    //}
+    //
+    //inline const double &GetEndPosX() const {
+    //    return end_pos_x_;
+    //}
+    //
+    //inline const double &GetEndPosY() const {
+    //    return end_pos_y_;
+    //}
 
     //bool HasSelected(const QPoint &pos) override;
     void DrawShape(QPainter &painter) override;
@@ -70,7 +68,7 @@ public:
 
 
    
-
+#if 0
 private:
     double start_pos_x_ = 0;          // 起点横坐标
     double start_pos_y_ = 0;          // 起点纵坐标&
@@ -78,5 +76,6 @@ private:
     double end_pos_y_ = 0;            // 终点纵坐标
     //QVector<QPoint> vectorPath;   // 路径容器
     bool selected_ = false;;          // 是否选中
+#endif
 };
 

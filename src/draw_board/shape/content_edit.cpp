@@ -6,6 +6,7 @@
 #include <qsizepolicy.h>
 #include <qpixmap.h>
 #include "public/yk_icon_button.h"
+#include "shape_const_def.h"
 
 TextEditWidget::TextEditWidget(QWidget* parent) : AutoSizeWidget(false, parent) {
     InitView();
@@ -29,6 +30,7 @@ void TextEditWidget::InitView() {
     title_bar_ = new QWidget();
     title_bar_->setMouseTracking(true);
     title_bar_->setStyleSheet("background-color:#ddeeff;");
+    title_bar_->setFixedHeight(kTextEditTitleBarHeight);
     auto title_hlayout = new QHBoxLayout(title_bar_);
     title_hlayout->setAlignment(Qt::AlignTop);
     title_hlayout->setContentsMargins(0, 0, 0, 0);
@@ -50,7 +52,7 @@ void TextEditWidget::InitView() {
     main_vlayout->addWidget(title_bar_);
 
     auto edit_hlayout = new QHBoxLayout();
-    edit_hlayout->setContentsMargins(6, 0, 6, 6);
+    edit_hlayout->setContentsMargins(kTextEditContentMargin, 0, kTextEditContentMargin, kTextEditContentMargin);
     edit_ = new QTextEdit();
     edit_->setStyleSheet("background-color:#ffffff;");
     auto edit_size_policy = edit_->sizePolicy();
@@ -121,8 +123,4 @@ void TextEditWidget::Clear() {
 
 void TextEditWidget::SetHtml(const QString& html) {
     edit_->setHtml(html);
-}
-
-int TextEditWidget::GetTitleBarHeight() {
-    return title_bar_height_;
 }

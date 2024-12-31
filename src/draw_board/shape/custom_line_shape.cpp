@@ -1,30 +1,38 @@
 #include "custom_line_shape.h"
 
-CustomLineShape::CustomLineShape()
-{
+
+std::shared_ptr<CustomLineShape> CustomLineShape::Make(const QVector<QPoint>& points_data) {
+    return std::make_shared<CustomLineShape>(points_data);
+}
+
+CustomLineShape::CustomLineShape() {
     shape_type_ = EShapeType::kCustomLine;
-    this->start_pos_x_ = 0.0;
+    /*this->start_pos_x_ = 0.0;
     this->start_pos_y_ = 0.0;
     this->end_pos_x_ = 0.0;
-    this->end_pos_y_ = 0.0;
+    this->end_pos_y_ = 0.0;*/
+}
+
+CustomLineShape::CustomLineShape(const QVector<QPoint>& points_data) :points_data_(points_data) {
+
 }
 
 CustomLineShape::~CustomLineShape() {
 
 }
 
-bool CustomLineShape::HasSelected(const QPoint& pos)
-{
-    //判断点是否在直线上
-    //LineArgument LP = getLinePara(this->GetStartPosX(), this->GetStartPosY(), this->GetEndPosX(), this->GetEndPosY());
-    //this->selected_ = false;
-    //if (pos.x() > this->GetStartPosX() && pos.x() < this->GetEndPosX()) {
-    //    if (((LP.A * pos.x() + LP.B * (pos.y() + 5) + LP.C < 0) && (LP.A * pos.x() + LP.B * (pos.y() - 5) + LP.C > 0)) || ((LP.A * pos.x() + LP.B * (pos.y() + 5) + LP.C > 0) && (LP.A * pos.x() + LP.B * (pos.y() - 5) + LP.C < 0))) {
-    //        this->selected_ = true;
-    //    }
-    //}
-    return this->selected_;
-}
+//bool CustomLineShape::HasSelected(const QPoint& pos)
+//{
+//    //判断点是否在直线上
+//    //LineArgument LP = getLinePara(this->GetStartPosX(), this->GetStartPosY(), this->GetEndPosX(), this->GetEndPosY());
+//    //this->selected_ = false;
+//    //if (pos.x() > this->GetStartPosX() && pos.x() < this->GetEndPosX()) {
+//    //    if (((LP.A * pos.x() + LP.B * (pos.y() + 5) + LP.C < 0) && (LP.A * pos.x() + LP.B * (pos.y() - 5) + LP.C > 0)) || ((LP.A * pos.x() + LP.B * (pos.y() + 5) + LP.C > 0) && (LP.A * pos.x() + LP.B * (pos.y() - 5) + LP.C < 0))) {
+//    //        this->selected_ = true;
+//    //    }
+//    //}
+//    return this->selected_;
+//}
 
 bool CustomLineShape::EnterSelectRange(const QPoint& point) {
     const double kThreshold = 30;
@@ -58,16 +66,21 @@ void CustomLineShape::MoveShape(const QPoint& curPoint, const QPoint& nextPoint)
     int min_y = points_data_[0].y();
     int max_x = min_x;
     int max_y = min_y;
-    QPoint dis = nextPoint - curPoint;
+    QPoint dif = nextPoint - curPoint;
     for (auto& p : points_data_) {
-        p += dis;
-        if (p.x() < min_x) 
+        p += dif;
+        if (p.x() < min_x) {
             min_x = p.x();
-        if (p.x() > max_x) 
+        }
+        if (p.x() > max_x) {
             max_x = p.x();
-        if (p.y() < min_y) 
+        }
+        if (p.y() < min_y) {
             min_y = p.y();
-        if (p.y() > max_y) max_y = p.y();
+        }
+        if (p.y() > max_y) { 
+            max_y = p.y(); 
+        }
     }
     rectf_ = QRectF(min_x, min_y, max_x - min_x, max_y - min_y);
 }
@@ -78,6 +91,10 @@ void CustomLineShape::PaintFrame(QPainter& painter) {
     painter.setPen(frame_pen);
     painter.drawRect(rectf_);
     painter.restore();
+}
+
+void CustomLineShape::SetPointsData(const QVector<QPoint>& points_data) {
+    points_data_ = points_data;
 }
 
 //void CustomLineShape::rotate(QPoint& BasePoint, double arg = 90)

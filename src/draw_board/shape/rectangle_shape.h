@@ -4,14 +4,16 @@
 class RectangleShape : public BaseShape
 {
 public:
+    static std::shared_ptr<RectangleShape> Make(const double& pos_x, const double& pos_y, const double& width, const double& height);
+
     RectangleShape();
-    RectangleShape(QPoint& click_point, QPoint& move_point);
+    //RectangleShape(QPoint& click_point, QPoint& move_point);
     RectangleShape(const double& pos_x, const double& pos_y, const double& width, const double& height);
     ~RectangleShape();
 
-    void UpdateData(QPoint& click_point, QPoint& move_point);
+    void UpdateData(const QPointF& click_point, const QPointF& move_point);
 
-    inline void SetStartPosX(const double& pos_x) {
+   /* inline void SetStartPosX(const double& pos_x) {
         start_pos_x_ = pos_x;
     }
 
@@ -41,10 +43,10 @@ public:
 
     inline const double &GetHeight() const {
         return height_;
-    }
+    }*/
 
     // 判断选中的点是否在矩形上
-    bool HasSelected(const QPoint &pos) override; 
+  //  bool HasSelected(const QPoint &pos) override; 
     void DrawShape(QPainter &painter) override;
     void MoveShape(const QPoint &p1,const QPoint &p2) override;
     // 画边框
@@ -55,11 +57,11 @@ public:
     bool PointInRectangle(const QRectF& rect, const QPointF& point);
 
 private:
-    double start_pos_x_ = 0;
-    double start_pos_y_ = 0;
+  /*  double start_pos_x_ = 0;
+    double start_pos_y_ = 0;*/
     double width_ = 0;
     double height_ = 0;
-    bool selected_ = false;       // 是否选中
+    //bool selected_ = false;       // 是否选中
 
 };
 

@@ -5,14 +5,17 @@
 class EllipseShape : public BaseShape
 {
 public:
+
+    static std::shared_ptr<EllipseShape> Make(const double& start_pos_x, const double& start_pos_y, const double& radius_w, const double& radius_h);
+
     EllipseShape();
-    EllipseShape(QPoint& click_point, QPoint& move_point);
+    //EllipseShape(QPoint& click_point, QPoint& move_point);
     EllipseShape(const double& start_pos_x, const double& start_pos_y, const double& radius_w, const double& radius_h);
     ~EllipseShape();
 
     void UpdateData(QPoint& click_point, QPoint& move_point);
 
-    inline void SetStartPosX(const double& start_pos_x) {
+   /* inline void SetStartPosX(const double& start_pos_x) {
         start_pos_x_ = start_pos_x;
     }
 
@@ -42,9 +45,9 @@ public:
 
     inline const double GetRediusH() const { 
         return radius_h_;
-    }
+    }*/
 
-    bool HasSelected(const QPoint &pos) override; 
+   // bool HasSelected(const QPoint &pos) override; 
     void DrawShape(QPainter &painter) override;
     void MoveShape(const QPoint &curPoint, const QPoint &nextPoint) override;
     void PaintFrame(QPainter& painter) override;
@@ -54,10 +57,10 @@ public:
     bool PointInEllipse(const QRectF& ellipse_rect, const QPointF& point);
 
 private:
-    double start_pos_x_ = 0; // 起点横坐标
-    double start_pos_y_ = 0; // 起点纵坐标
+    //double start_pos_x_ = 0; // 起点横坐标
+    //double start_pos_y_ = 0; // 起点纵坐标
     double radius_w_ = 0;    // 横向半径长度
     double radius_h_ = 0;    // 纵向半径长度
-    bool selected_ = false;
+    //bool selected_ = false;
 };
 

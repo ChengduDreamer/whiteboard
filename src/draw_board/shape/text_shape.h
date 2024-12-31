@@ -10,7 +10,11 @@
 class TextShape : public BaseShape
 {
 public:
-    TextShape(const double& start_pos_x, const double& start_pos_y, const QString& content, QWidget* parent);
+    //TextShape(const double& start_pos_x, const double& start_pos_y, const QString& content, QWidget* parent);
+
+    static std::shared_ptr<TextShape> Make(const QPointF& start_pos, const QString& content, QWidget* parent);
+
+    TextShape(const QPointF& start_pos, const QString& content, QWidget* parent);
     ~TextShape();
 
    /* inline void SetStartPosX(const double& pos_x) {
@@ -30,7 +34,7 @@ public:
     }*/
     
 
-    bool HasSelected(const QPoint &pos) override; 
+    //bool HasSelected(const QPoint &pos) override; 
     void DrawShape(QPainter &painter) override;
     void MoveShape(const QPoint &curPoint, const QPoint &nextPoint) override;
     void PaintFrame(QPainter& painter) override;
@@ -45,19 +49,19 @@ public:
 
     void SetHtml(const QString& html);
 
-    QString html_content_;
-
-    QTextDocument text_document_;
+ 
 
 private:
-  
-
-    bool selected_ = false;
+    //bool selected_ = false;
 
     QWidget* parent_ = nullptr;
 
     QRectF rectf_;
 
     bool hiden_ = false;
+
+    QString html_content_;
+
+    QTextDocument text_document_;
 };
 

@@ -7,8 +7,7 @@
 
 //const double PI = 3.1415926/180;
 
-enum class EShapeType
-{
+enum class EShapeType {
     kUnkonwn,     // 未知形状
     kReckangle,   // 矩形
     kEllipse,     // 椭圆
@@ -24,34 +23,34 @@ public:
     BaseShape();
     virtual ~BaseShape();
 
-    inline void SetShapeType(const EShapeType &shapetype) { 
-        this->shape_type_= shapetype ;
+    inline void SetShapeType(const EShapeType& shapetype) { 
+        this->shape_type_= shapetype;
     }
 
-    inline const EShapeType &GetShapeType() const {
+    EShapeType GetShapeType() const {
         return shape_type_;
     }
 
-    void SetStartPoint(const QPoint& start_point) {
+    void SetStartPoint(const QPointF& start_point) {
         start_point_ = start_point;
     }
 
-    void SetEndPoint(const QPoint& end_point) {
+    void SetEndPoint(const QPointF& end_point) {
         end_point_ = end_point;
     }
 
-    const QPoint &GetStartPoint() const {
+    QPointF GetStartPoint() const {
         return start_point_;
     }
 
-    const QPoint &GetEndPoint() const {
+    QPointF GetEndPoint() const {
         return end_point_;
     }
 
     // 图形是否被选中
-    virtual bool HasSelected(const QPoint&){
-        return false;
-    }
+    //virtual bool HasSelected(const QPoint&){
+    //    return false;
+    //}
 
     // 判断是否进入选择区域范围
     virtual bool EnterSelectRange(const QPoint& point) {
@@ -59,17 +58,13 @@ public:
     }
     
     // 画图函数
-    virtual void DrawShape(QPainter &){}
+    virtual void DrawShape(QPainter&){}
 
     // 移动图形
-    virtual void MoveShape(const QPoint &,const QPoint &){}
+    virtual void MoveShape(const QPoint&,const QPoint&){}
 
     // 画边框
-    virtual void PaintFrame(QPainter& ) {} 
-
-    //void rotatePoint(QPoint &BasePoint,QPoint &point, double arg); // 点point进行旋转，旋转角度为arg(度)
-    //virtual void rotate(QPoint &BasePoint ,double arg);
-   
+    virtual void PaintFrame(QPainter&) {} 
 
      // 计算两点之间的欧几里得距离
     double DistanceBetweenPoints(const QPointF& p1, const QPointF& p2);
@@ -78,11 +73,10 @@ public:
     double PointToLineSegmentDistance(const QPointF& start, const QPointF& end, const QPointF& point);
 
     bool IsPointNearLineSegment(const QPointF& start, const QPointF& end, const QPointF& point, double threshold);
-
 public:
-    QPoint start_point_;   //起始点
-    QPoint end_point_;     //最新点
-    QPoint center_point_;  //中心点
+    QPointF start_point_;   //起始点
+    QPointF end_point_;     //最新点
+    //QPointF center_point_;  //中心点
 protected:
     EShapeType shape_type_ = EShapeType::kUnkonwn;
 
