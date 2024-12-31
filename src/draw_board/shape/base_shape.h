@@ -5,8 +5,6 @@
 #include <QDebug>
 #include <QPoint>
 
-//const double PI = 3.1415926/180;
-
 enum class EShapeType {
     kUnkonwn,     // 未知形状
     kReckangle,   // 矩形
@@ -23,8 +21,8 @@ public:
     BaseShape();
     virtual ~BaseShape();
 
-    inline void SetShapeType(const EShapeType& shapetype) { 
-        this->shape_type_= shapetype;
+    void SetShapeType(const EShapeType& shapetype) { 
+        shape_type_= shapetype;
     }
 
     EShapeType GetShapeType() const {
@@ -47,16 +45,13 @@ public:
         return end_point_;
     }
 
-    // 图形是否被选中
-    //virtual bool HasSelected(const QPoint&){
-    //    return false;
-    //}
-
     // 判断是否进入选择区域范围
     virtual bool EnterSelectRange(const QPoint& point) {
         return false;
     }
     
+    void SetFrameStyle(QPainter&);
+
     // 画图函数
     virtual void DrawShape(QPainter&){}
 
@@ -76,7 +71,6 @@ public:
 public:
     QPointF start_point_;   //起始点
     QPointF end_point_;     //最新点
-    //QPointF center_point_;  //中心点
 protected:
     EShapeType shape_type_ = EShapeType::kUnkonwn;
 

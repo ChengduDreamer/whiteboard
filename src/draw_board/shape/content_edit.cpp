@@ -62,7 +62,6 @@ void TextEditWidget::InitView() {
     main_vlayout->addLayout(edit_hlayout);
 }
 
-
 void TextEditWidget::mouseMoveEvent(QMouseEvent* event) {
     QRect title_rect = title_bar_->geometry();
     title_rect.setY(title_rect.y() + 16);
@@ -71,7 +70,6 @@ void TextEditWidget::mouseMoveEvent(QMouseEvent* event) {
             enter_move_state = true;
         }
     }
-
     if (enter_move_state) {
         setCursor(Qt::SizeAllCursor);
         move(event->pos() - point_ + pos());

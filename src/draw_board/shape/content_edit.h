@@ -24,7 +24,6 @@ public:
     void SetFocus();
     void Clear();
     void SetHtml(const QString& html);
-    int GetTitleBarHeight();
 Q_SIGNALS:
     void SigHtml(QString);
     void SigCancel();

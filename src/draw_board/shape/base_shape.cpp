@@ -31,8 +31,7 @@ double BaseShape::PointToLineSegmentDistance(const QPointF& start, const QPointF
     t = std::max(0.0, std::min(1.0, t));
 
     // 计算投影点的坐标
-    QPointF projection(start.x() + t * (end.x() - start.x()),
-        start.y() + t * (end.y() - start.y()));
+    QPointF projection(start.x() + t * (end.x() - start.x()), start.y() + t * (end.y() - start.y()));
 
     // 返回点到投影点的距离
     return DistanceBetweenPoints(point, projection);
@@ -41,4 +40,10 @@ double BaseShape::PointToLineSegmentDistance(const QPointF& start, const QPointF
 bool BaseShape::IsPointNearLineSegment(const QPointF& start, const QPointF& end, const QPointF& point, double threshold) {
     double distance = PointToLineSegmentDistance(start, end, point);
     return distance <= threshold;
+}
+
+void BaseShape::SetFrameStyle(QPainter& painter) {
+    QPen frame_pen(QColor(0x00, 0xff, 0xa1), 2, Qt::DashLine, Qt::RoundCap);
+    painter.setPen(frame_pen);
+    painter.setBrush(Qt::NoBrush);
 }

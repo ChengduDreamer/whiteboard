@@ -185,7 +185,6 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event)
                 break;
             }
             case EShapeType::kLine: {
-                //std::shared_ptr<LineShape> line = std::make_shared<LineShape>(double(clicked_point_.x()), double(clicked_point_.y()), double(move_point_.x()), double(move_point_.y()));
                 std::shared_ptr<LineShape> line = LineShape::Make(clicked_point_, move_point_);
                 shapes_.emplace_back(line);
                 break;
