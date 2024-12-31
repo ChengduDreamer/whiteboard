@@ -18,7 +18,7 @@ DrawBoardWidget::~DrawBoardWidget() {
 }
 
 void DrawBoardWidget::InitView() {
-    const int kIconBtnSize = 40;
+    const int kIconBtnSize = 30;
 
     setMouseTracking(true);
     setAttribute(Qt::WA_StyledBackground);
@@ -29,10 +29,17 @@ void DrawBoardWidget::InitView() {
     main_vlayout->setAlignment(Qt::AlignTop);
     main_vlayout->setContentsMargins(0, 0, 0, 0);
 
-    auto operation_hlayout = new QHBoxLayout();
-    operation_hlayout->setSpacing(12);
-    operation_hlayout->setAlignment(Qt::AlignLeft);
-    operation_hlayout->setContentsMargins(0, 0, 0, 0);
+    auto menu_bar_hlayout = new QHBoxLayout();
+    menu_bar_hlayout->setSpacing(12);
+    menu_bar_hlayout->setAlignment(Qt::AlignLeft);
+    menu_bar_hlayout->setContentsMargins(0, 0, 0, 0);
+
+    QWidget* shape_btn_bk_widget = new QWidget();
+    shape_btn_bk_widget->setStyleSheet("border:1px solid #99aaee;");
+    auto shape_btn_hlayout = new QHBoxLayout(shape_btn_bk_widget);
+    shape_btn_hlayout->setSpacing(12);
+    shape_btn_hlayout->setAlignment(Qt::AlignLeft);
+    shape_btn_hlayout->setContentsMargins(8, 0, 8, 0);
 
     btn_group_ = new QButtonGroup();
     ellipase_btn_ = new YKIconButton();
@@ -73,15 +80,20 @@ void DrawBoardWidget::InitView() {
     btn_group_->addButton(revoke_btn_);
     btn_group_->setExclusive(true);
 
-    operation_hlayout->addWidget(ellipase_btn_);
-    operation_hlayout->addWidget(rectangle_btn_);
-    operation_hlayout->addWidget(line_btn_);
-    operation_hlayout->addWidget(custom_line_btn_);
-    operation_hlayout->addWidget(text_btn_);
-    operation_hlayout->addSpacing(100);
-    operation_hlayout->addWidget(delete_btn_);
-    operation_hlayout->addWidget(revoke_btn_);
-    main_vlayout->addLayout(operation_hlayout);
+    shape_btn_hlayout->addWidget(ellipase_btn_);
+    shape_btn_hlayout->addWidget(rectangle_btn_);
+    shape_btn_hlayout->addWidget(line_btn_);
+    shape_btn_hlayout->addWidget(custom_line_btn_);
+    shape_btn_hlayout->addWidget(text_btn_);
+
+    menu_bar_hlayout->addStretch(1);
+    menu_bar_hlayout->addWidget(shape_btn_bk_widget);
+    menu_bar_hlayout->addStretch(1);
+    menu_bar_hlayout->addWidget(delete_btn_);
+    menu_bar_hlayout->addWidget(revoke_btn_);
+    menu_bar_hlayout->addSpacing(30);
+
+    main_vlayout->addLayout(menu_bar_hlayout);
 
     draw_widget_ = new DrawWidget(this);
     main_vlayout->addWidget(draw_widget_);
