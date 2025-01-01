@@ -197,6 +197,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event) {
 
 void DrawWidget::Revoke() {
     if (!shapes_.empty()) {
+        if (cur_select_shape_ == shapes_.back()) {
+            cur_select_shape_ = nullptr;
+        }
         shapes_.pop_back();
     }
     update();
