@@ -14,9 +14,16 @@ desc:
 class YKIconButton : public QPushButton {
 	Q_OBJECT
 public:
+	struct BackgroundInfo {
+		QColor m_background_color_normal;
+		QColor m_background_color_hover;
+		QColor m_background_color_press;
+		QColor m_background_color_disable;
+	};
+public:
 	YKIconButton(QWidget* parent = nullptr);
 	~YKIconButton() = default;
-	void Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path);
+	void Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path, const BackgroundInfo& bg_info);
 
 	void set_pixmap_2(const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path);
 	void show_pixmap_1();
@@ -55,6 +62,8 @@ private:
 
 	bool m_show_pixmap_1 = true;
 	bool m_show_pixmap_2 = false;
+
+	BackgroundInfo m_background_info;
 
 private:
 	QSvgRenderer m_svg_renderer;

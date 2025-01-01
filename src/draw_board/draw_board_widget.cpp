@@ -22,7 +22,7 @@ void DrawBoardWidget::InitView() {
 
     setMouseTracking(true);
     setAttribute(Qt::WA_StyledBackground);
-    this->setWindowTitle(QStringLiteral("画图板"));
+    this->setWindowTitle(QStringLiteral("白板"));
  
     auto main_vlayout = new QVBoxLayout(this);
     main_vlayout->setSpacing(0);
