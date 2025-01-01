@@ -111,6 +111,9 @@ void DrawBoardWidget::InitView() {
 
     draw_widget_ = new DrawWidget(this);
     main_vlayout->addWidget(draw_widget_);
+
+    delete_btn_->setToolTip("delete selected graphics.");
+    revoke_btn_->setToolTip("delete the graphic drawn in the previous step.");
 }
 
 void DrawBoardWidget::InitSigChannel() {
