@@ -43,19 +43,16 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
             static RectangleShape rect_shape;
             rect_shape.UpdateData(clicked_point_, move_point_);
             rect_shape.DrawShape(painter);
-            /*mouse_state_ = EMouseState::kDrawShape;*/
             break;
         }
         case EShapeType::kEllipse: {
             static EllipseShape ell;
             ell.UpdateData(clicked_point_, move_point_);
             ell.DrawShape(painter);
-            //mouse_state_ = EMouseState::kDrawShape;
             break;
         }
         case EShapeType::kLine: {
             painter.drawLine(clicked_point_, move_point_);
-            //mouse_state_ = EMouseState::kDrawShape;
             break;
         }
         case EShapeType::kText: {
@@ -65,7 +62,6 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
             static CustomLineShape custom_line;
             custom_line.SetPointsData(points_data_);
             custom_line.DrawShape(painter);
-            //mouse_state_ = EMouseState::kDrawShape;
             break;
         }
         default:
@@ -75,7 +71,9 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
 
     // 对选中的图形 绘制边框
     if(cur_select_shape_){
-        cur_select_shape_->PaintFrame(painter);
+        if (cur_select_shape_ != editing_text_shape_) {
+            cur_select_shape_->PaintFrame(painter);
+        }
     }
 
     update();
@@ -248,8 +246,6 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event) {
     move_point_ = event->pos();
 
     if(mouse_left_btn_pressed_) {
-        
-        //update();
         if (EShapeType::kCustomLine == draw_shape_type_) {
             points_data_.append(event->pos());
         }

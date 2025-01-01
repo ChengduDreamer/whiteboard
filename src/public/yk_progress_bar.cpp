@@ -20,7 +20,7 @@ void YKProgressBar::Init() {
 }
 
 
-// ÊµÏÖÊó±êµã»÷½ø¶ÈÌõ£¬»¬¿éÄÜÌø×ªµ½ Êó±êÎ»ÖÃ
+// å®žçŽ°é¼ æ ‡ç‚¹å‡»è¿›åº¦æ¡ï¼Œæ»‘å—èƒ½è·³è½¬åˆ° é¼ æ ‡ä½ç½®
 void YKProgressBar::mouseReleaseEvent(QMouseEvent* event) {
 	setValue(QStyle::sliderValueFromPosition(this->minimum(), this->maximum(), event->x(), this->width()));
 	emit SigPosChanged();

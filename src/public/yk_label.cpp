@@ -26,8 +26,8 @@ void YKLabel::Init2(const BorderInfo& border_info, const TextInfo& text_info, co
 
 void YKLabel::paintEvent(QPaintEvent* event) {
 	QPainter painter(this);
-	painter.setRenderHints(QPainter::Antialiasing);//¿ªÆô·´¾â³İºó£¬»­³öµÄÏßÌõ»áÏàÓ¦±ä´Ö
-	painter.setPen(Qt::NoPen); //Èç¹û²»ÉèÖÃÕâ¸ö£¬»æÖÆ³öÀ´µÄ¾Í»áÓĞºÚ±ß
+	painter.setRenderHints(QPainter::Antialiasing);//å¼€å¯åé”¯é½¿åï¼Œç”»å‡ºçš„çº¿æ¡ä¼šç›¸åº”å˜ç²—
+	painter.setPen(Qt::NoPen); //å¦‚æœä¸è®¾ç½®è¿™ä¸ªï¼Œç»˜åˆ¶å‡ºæ¥çš„å°±ä¼šæœ‰é»‘è¾¹
 	painter.save();
 
 	if (m_border_info.m_width > 0) {
@@ -49,7 +49,7 @@ void YKLabel::paintEvent(QPaintEvent* event) {
 	font_pen.setColor(m_text_info.m_color);
 	painter.setPen(font_pen);
 	painter.setFont(font);
-	painter.drawText(m_text_info.m_padding_left, m_text_info.m_padding_top, m_text_info.m_text); // ×¢Òâ ÕâÀïµÄy×ø±ê  ÊÇ ÎÄ×Öµ×²¿ ¾àÀë °´Å¥ÉÏ±ß¿ò ¾àÀë
+	painter.drawText(m_text_info.m_padding_left, m_text_info.m_padding_top, m_text_info.m_text); // æ³¨æ„ è¿™é‡Œçš„yåæ ‡  æ˜¯ æ–‡å­—åº•éƒ¨ è·ç¦» æŒ‰é’®ä¸Šè¾¹æ¡† è·ç¦»
 	m_font = font;
 }
 

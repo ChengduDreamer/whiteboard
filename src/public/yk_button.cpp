@@ -56,8 +56,8 @@ void YKButton::paintEvent(QPaintEvent* event) {
 		}
 	}
 	else {
-		pen.setColor(m_border_info.m_color_press);
-		painter.setBrush(QBrush(m_background_info.m_background_color_press));
+		pen.setColor(m_border_info.m_color_disable);
+		painter.setBrush(QBrush(m_background_info.m_background_color_disable));
 	}
 
 	if (m_border_info.m_border_width > 0) {

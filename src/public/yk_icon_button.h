@@ -19,15 +19,17 @@ public:
 		QColor m_background_color_hover;
 		QColor m_background_color_press;
 		QColor m_background_color_disable;
+		QColor m_background_color_checked;
 	};
 public:
 	YKIconButton(QWidget* parent = nullptr);
 	~YKIconButton() = default;
-	void Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path, const BackgroundInfo& bg_info);
-
+	void Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path);
 	void set_pixmap_2(const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path);
 	void show_pixmap_1();
 	void show_pixmap_2();
+	void SetBackgroundInfo(const BackgroundInfo& bg_info);
+	
 
 	virtual void paintEvent(QPaintEvent* event) override;
 	virtual void mousePressEvent(QMouseEvent* event) override;
@@ -68,4 +70,5 @@ private:
 private:
 	QSvgRenderer m_svg_renderer;
 	bool m_use_svg = true;
+	bool m_user_bg = false;
 };

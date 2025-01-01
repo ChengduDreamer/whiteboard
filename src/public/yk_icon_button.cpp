@@ -1,11 +1,12 @@
 #include "yk_icon_button.h"
+#include <qdebug.h>
 
 YKIconButton::YKIconButton(QWidget* parent) : QPushButton(parent) {
 	setMouseTracking(true);
 	setAttribute(Qt::WA_TranslucentBackground, true);
 }
 
-void YKIconButton::Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path, const BackgroundInfo& bg_info) {
+void YKIconButton::Init(QSize size, const QString& normal_img_path, const QString& hover_img_path, const QString& click_img_path) {
 	setFixedSize(size);
 
 	m_normal_img_path_1 = normal_img_path;
@@ -15,24 +16,26 @@ void YKIconButton::Init(QSize size, const QString& normal_img_path, const QStrin
 	m_normal_pixmap_1 = QPixmap(m_normal_img_path_1);
 	m_hover_pixmap_1 = QPixmap(m_hover_img_path_1);
 	m_press_img_pixmap_1 = QPixmap(m_press_img_path_1);
-
-	m_background_info = bg_info;
 }
 
 
 void YKIconButton::paintEvent(QPaintEvent* event) {
 	QPainter painter(this);
 
-	painter.save();
-	if (m_cursor_in) {
-
-
-	} else {
+	if (m_user_bg) {
+		painter.save();
 	
+		painter.setPen(Qt::NoPen);
+		if (isChecked()) {
+			painter.setBrush(QBrush(m_background_info.m_background_color_checked));
+		}
+		else {
+			// to do distinguish normal hover press
+			painter.setBrush(QBrush(m_background_info.m_background_color_normal));
+		}
+		painter.drawRoundedRect(this->rect(), 0, 0);
+		painter.restore();
 	}
-
-
-	painter.restore();
 
 	if (m_cursor_in) {
 		if (m_pressed) {
@@ -153,3 +156,7 @@ void YKIconButton::SetUseSvg(bool use_svg) {
 	m_use_svg = use_svg;
 }
 
+void YKIconButton::SetBackgroundInfo(const BackgroundInfo& bg_info) {
+	m_background_info = bg_info;
+	m_user_bg = true;
+}
