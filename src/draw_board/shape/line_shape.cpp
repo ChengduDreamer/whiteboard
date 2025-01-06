@@ -19,8 +19,7 @@ LineShape::~LineShape() {
 
 
 bool LineShape::EnterSelectRange(const QPoint& point) {
-    const double kThreshold = 30;
-    return IsPointNearLineSegment(start_point_, end_point_, point, kThreshold);
+    return IsPointNearLineSegment(start_point_, end_point_, point, kShapeNearRangeSize);
 }
 
 void LineShape::DrawShape(QPainter &painter) {

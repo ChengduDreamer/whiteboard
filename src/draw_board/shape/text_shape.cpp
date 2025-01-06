@@ -18,8 +18,7 @@ TextShape::~TextShape() {
 }
 
 bool TextShape::EnterSelectRange(const QPoint& point) {
-    const int kRangeSize = 30;
-    QRectF outside_rectf{ start_point_.x()*1.0 - kRangeSize, start_point_.y()*1.0 - kRangeSize,  rectf_.width() + 2 * kRangeSize, rectf_.height() + 2 * kRangeSize };
+    QRectF outside_rectf{ start_point_.x()*1.0 - kShapeNearRangeSize, start_point_.y()*1.0 - kShapeNearRangeSize,  rectf_.width() + 2 * kShapeNearRangeSize, rectf_.height() + 2 * kShapeNearRangeSize };
     return PointInRectangle(outside_rectf, point);
 }
 

@@ -14,6 +14,7 @@
 #include <QPoint>
 #include <QLineEdit>
 #include <QKeyEvent>
+#include <qpixmap.h>
 #include <memory>
 #include "shape/base_shape.h"
 
@@ -25,7 +26,7 @@ class TextShape;
 class TextEditWidget;
 class DrawBoardWidget;
 
-class DrawWidget :public QOpenGLWidget
+class DrawWidget :public QWidget
 {
     Q_OBJECT
     friend class DrawBoardWidget;
@@ -65,13 +66,15 @@ public:
     // 当前选中的对象
     std::shared_ptr<BaseShape> cur_select_shape_ = nullptr;
     std::vector<std::shared_ptr<BaseShape>> shapes_;
+
+    void SetBackground(QPixmap&& pixmap);
+
 private:
     void InitView();
     void InitSigChannel();
 
 private:
     
-
     TextEditWidget* text_edit_ = nullptr;
 
     // 文本编辑位置
@@ -103,5 +106,9 @@ private:
     
     // 编辑状态中的文本图形
     std::shared_ptr<TextShape> editing_text_shape_ = nullptr;
+
+    QPixmap bg_pixmap_;
+
+    QPixmap origin_pixmap_;
 };
 

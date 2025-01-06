@@ -24,9 +24,11 @@ public slots:
     void OnDeleteBtnClicked();
     void OnRevokeBtnClicked();
     void OnCustomLineBtnClicked();
+    void OnDownloadBtnClicked();
 private:
     void InitView();
     void InitSigChannel();
+    void RestoreDrawWidget();
 private:
     QString content_text_;                         
 
@@ -38,6 +40,8 @@ private:
     YKIconButton* placeholder_btn_ = nullptr;
     QButtonGroup* btn_group_ = nullptr;
 
+
+    YKIconButton* download_btn_ = nullptr;
     YKIconButton* revoke_btn_ = nullptr;            
     YKIconButton* delete_btn_ = nullptr;
     DrawWidget* draw_widget_;                     

@@ -28,6 +28,13 @@
 		<file>image/oper_icon/text_edit_hover.svg</file>
 		<file>image/oper_icon/text_edit_normal.svg</file>
 		<file>image/oper_icon/text_edit_press.svg</file>
+		<file>image/oper_icon/download_normal.svg</file>
+		<file>image/oper_icon/download_hover.svg</file>
+		<file>image/oper_icon/download_press.svg</file>
+
+		<file>image/test/01.png</file>
+		<file>image/test/02.png</file>
+		<file>image/test/03.png</file>
 		
     </qresource>
 </RCC>

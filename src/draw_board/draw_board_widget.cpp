@@ -4,13 +4,23 @@
 #include <qdebug.h>
 #include <QPushButton.h>
 #include <qbuttongroup.h>
+#include <qtimer.h>
+#include <qpixmap.h>
+#include <qfiledialog.h>
 #include "public/yk_icon_button.h"
 #include "draw_widget.h"
 
 DrawBoardWidget::DrawBoardWidget(QWidget *parent): QWidget(parent) {
-    resize(800, 600);
     InitView();
     InitSigChannel();
+    resize(800, 600);
+    // to do test
+    QTimer::singleShot(2000, [=]() {
+        QPixmap pixmap;
+        pixmap.load(":/draw_board/image/test/02.png");
+        this->resize(pixmap.size());  // to do ，如果图片太大，需要增加滚动条
+        draw_widget_->SetBackground(std::move(pixmap));
+    });
 }
 
 DrawBoardWidget::~DrawBoardWidget() {
@@ -28,6 +38,9 @@ void DrawBoardWidget::InitView() {
     main_vlayout->setSpacing(0);
     main_vlayout->setAlignment(Qt::AlignTop);
     main_vlayout->setContentsMargins(0, 0, 0, 0);
+
+    draw_widget_ = new DrawWidget(this);
+    main_vlayout->addWidget(draw_widget_);
 
     auto menu_bar_hlayout = new QHBoxLayout();
     menu_bar_hlayout->setSpacing(12);
@@ -71,6 +84,10 @@ void DrawBoardWidget::InitView() {
     text_btn_->SetUseSvg(true);
     text_btn_->SetBackgroundInfo(icon_bg_info);
 
+    download_btn_ = new YKIconButton();
+    download_btn_->Init(QSize(kIconBtnSize, kIconBtnSize), ":/draw_board/image/oper_icon/download_normal.svg", ":/draw_board/image/oper_icon/download_hover.svg", ":/draw_board/image/oper_icon/download_press.svg");
+    download_btn_->SetUseSvg(true);
+
     delete_btn_ = new YKIconButton();
     delete_btn_->Init(QSize(kIconBtnSize, kIconBtnSize), ":/draw_board/image/oper_icon/delete_element_normal.svg", ":/draw_board/image/oper_icon/delete_element_hover.svg", ":/draw_board/image/oper_icon/delete_element_press.svg");
     delete_btn_->SetUseSvg(true);
@@ -103,15 +120,15 @@ void DrawBoardWidget::InitView() {
     //menu_bar_hlayout->addStretch(1);
     menu_bar_hlayout->addWidget(shape_btn_bk_widget);
     menu_bar_hlayout->addStretch(1);
+    menu_bar_hlayout->addWidget(download_btn_);
     menu_bar_hlayout->addWidget(delete_btn_);
     menu_bar_hlayout->addWidget(revoke_btn_);
     menu_bar_hlayout->addSpacing(30);
 
     main_vlayout->addLayout(menu_bar_hlayout);
 
-    draw_widget_ = new DrawWidget(this);
-    main_vlayout->addWidget(draw_widget_);
-
+    
+    download_btn_->setToolTip("save as png.");
     delete_btn_->setToolTip("delete selected graphics.");
     revoke_btn_->setToolTip("delete the graphic drawn in the previous step.");
 }
@@ -123,6 +140,7 @@ void DrawBoardWidget::InitSigChannel() {
     connect(text_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnTextBtnClicked);
     connect(custom_line_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnCustomLineBtnClicked);
 
+    connect(download_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnDownloadBtnClicked);
     connect(delete_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnDeleteBtnClicked);
     connect(revoke_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnRevokeBtnClicked);
 }
@@ -142,9 +160,7 @@ void DrawBoardWidget::keyPressEvent(QKeyEvent *event) {
         break;
     }
     case Qt::Key_Escape:
-        draw_widget_->SetShapeType(EShapeType::kUnkonwn);
-        draw_widget_->cur_select_shape_ = NULL;
-        placeholder_btn_->setChecked(true);
+        RestoreDrawWidget();
         break;
     case Qt::Key_Return:
         break;
@@ -192,4 +208,25 @@ void DrawBoardWidget::OnRevokeBtnClicked() {
 void DrawBoardWidget::OnCustomLineBtnClicked() {
     draw_widget_->SetShapeType(EShapeType::kCustomLine);
     custom_line_btn_->setChecked(true);
+}
+
+void DrawBoardWidget::OnDownloadBtnClicked() {
+    RestoreDrawWidget();
+    auto pixmap = draw_widget_->grab();
+
+    QString filePath = QFileDialog::getSaveFileName(this, "Save Widget as PNG", "", "Images (*.png)");
+    if (!filePath.isEmpty()) {
+        if (pixmap.save(filePath, "PNG")) {
+            qDebug() << "Widget saved as PNG:" << filePath;
+        }
+        else {
+            qDebug() << "Failed to save the widget as PNG.";
+        }
+    }
+}
+
+void DrawBoardWidget::RestoreDrawWidget() {
+    draw_widget_->SetShapeType(EShapeType::kUnkonwn);
+    draw_widget_->cur_select_shape_ = NULL;
+    placeholder_btn_->setChecked(true);
 }

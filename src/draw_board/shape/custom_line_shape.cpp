@@ -18,7 +18,6 @@ CustomLineShape::~CustomLineShape() {
 }
 
 bool CustomLineShape::EnterSelectRange(const QPoint& point) {
-    const double kThreshold = 30;
     int step_length = (int)( points_data_.size() * 1.0f / 10);
     if (step_length < 1) {
         step_length = 1;
@@ -26,7 +25,7 @@ bool CustomLineShape::EnterSelectRange(const QPoint& point) {
     int temp = 0;
     for (int i = 0; i < points_data_.size(); i = i + step_length) {
         double distance = PointToLineSegmentDistance(points_data_[temp], points_data_[i], point);
-        if (distance <= kThreshold) {
+        if (distance <= kShapeNearRangeSize) {
             return true; // 如果点到任意一条线段的距离小于阈值，则认为在附近
         }
         temp = i;

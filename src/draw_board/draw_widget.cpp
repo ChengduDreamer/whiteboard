@@ -9,7 +9,7 @@
 #include "shape/auto_size_widget.h"
 #include "shape/shape_const_def.h"
 
-DrawWidget::DrawWidget(QWidget *parent):QOpenGLWidget(parent) {
+DrawWidget::DrawWidget(QWidget *parent):QWidget(parent) {
     InitView();
     InitSigChannel();
 }
@@ -19,17 +19,30 @@ DrawWidget::~DrawWidget() {
 }
 
 void DrawWidget::paintEvent(QPaintEvent *event) {
-    QOpenGLWidget::paintEvent(event); 
+    QWidget::paintEvent(event);
     QPainter painter(this);
-    painter.setBrush(white_brush_);
-    painter.drawRect(rect());// 整个窗体的矩形
+   
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(white_brush_);
+    painter.drawRect(rect());
+    painter.save();
+    if (!bg_pixmap_.isNull()) {
+        painter.drawPixmap(0, 0, bg_pixmap_);
+        QPen pen;
+        pen.setColor(QColor(0x99, 0x99, 0x99));
+        pen.setWidth(1);
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(0, 0, bg_pixmap_.width(), bg_pixmap_.height());
+    }
+    painter.restore();
+
     // 设置画笔
     painter.setPen(black_pen_);
-   // painter.setFont(text_font_);
+    // painter.setFont(text_font_);
     painter.setBrush(null_brush_);
 
     for (auto& shape : shapes_) {
@@ -80,12 +93,33 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
 }
 
 void DrawWidget::resizeEvent(QResizeEvent *event) {
-    QOpenGLWidget::resizeEvent(event);
+    if (!bg_pixmap_.isNull()) {
+        qDebug() << "DrawWidget::resizeEvent " << event;
+       // bg_pixmap_ = bg_pixmap_.scaled(event->size());
+        // 按比例缩放
+        float pixmap_width = origin_pixmap_.width();
+        float pixmap_height = origin_pixmap_.height();
+        float window_width = this->width();
+        float window_height = this->height();
+
+        if (window_width / window_height >= pixmap_width / pixmap_height) {
+            float new_pixmap_width = pixmap_width * window_height / pixmap_height;
+            bg_pixmap_ = origin_pixmap_.scaled(new_pixmap_width, window_height);
+        }
+        else {
+            float new_pixmap_height = pixmap_height * window_width / pixmap_width;
+            bg_pixmap_ = origin_pixmap_.scaled(window_width, new_pixmap_height);
+        }
+
+    }
+
+
+    QWidget::resizeEvent(event);
 }
 
 void DrawWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() != Qt::MouseButton::LeftButton) {
-        QOpenGLWidget::mousePressEvent(event);
+        QWidget::mousePressEvent(event);
         return;
     }
     points_data_.clear();
@@ -106,13 +140,13 @@ void DrawWidget::mousePressEvent(QMouseEvent *event) {
             mouse_state_ = EMouseState::kDrawShape;
         }
     }       
-    QOpenGLWidget::mousePressEvent(event);
+    QWidget::mousePressEvent(event);
 }
 
 // 双击时候 判断鼠标坐标如果在文字图形范围内，就让该文字图元进入编辑状态
 void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event) {
     if (event->button() != Qt::MouseButton::LeftButton) {
-        QOpenGLWidget::mouseDoubleClickEvent(event);
+        QWidget::mouseDoubleClickEvent(event);
     }
     QPoint point = event->pos();
     std::shared_ptr<BaseShape> can_select_shape = nullptr;
@@ -134,12 +168,12 @@ void DrawWidget::mouseDoubleClickEvent(QMouseEvent *event) {
             text_edit_->move(point.toPoint());
         }
     }
-    QOpenGLWidget::mouseDoubleClickEvent(event);
+    QWidget::mouseDoubleClickEvent(event);
 }
 
 void DrawWidget::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() != Qt::MouseButton::LeftButton) {
-        QOpenGLWidget::mouseReleaseEvent(event);
+        QWidget::mouseReleaseEvent(event);
         return;
     }
 
@@ -192,7 +226,7 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *event) {
     mouse_state_ = EMouseState::kGeneral;
     points_data_.clear();
     update();
-    QOpenGLWidget::mouseReleaseEvent(event);
+    QWidget::mouseReleaseEvent(event);
 }
 
 void DrawWidget::Revoke() {
@@ -254,7 +288,7 @@ void DrawWidget::mouseMoveEvent(QMouseEvent *event) {
         }
     }
 
-    QOpenGLWidget::mouseMoveEvent(event);
+    QWidget::mouseMoveEvent(event);
 }
 
 
@@ -307,7 +341,14 @@ void DrawWidget::InitView() {
     text_edit_->setFont(text_font_);
 
     this->setMouseTracking(true);
+}
 
-    resize(800, 600);
+void DrawWidget::SetBackground(QPixmap&& pixmap) {
+    origin_pixmap_ = std::move(pixmap);
+    bg_pixmap_ = origin_pixmap_;
+    if (!bg_pixmap_.isNull()) {
+        
+        qDebug() << "SetBackground bg_pixmap_ w = " << bg_pixmap_.width() << ", h = " << bg_pixmap_.height();
+    }
 }
 

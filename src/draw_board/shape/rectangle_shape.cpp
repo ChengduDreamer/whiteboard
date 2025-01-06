@@ -34,15 +34,14 @@ void RectangleShape::UpdateData(const QPointF& click_point, const QPointF& move_
 }
 
 bool RectangleShape::EnterSelectRange(const QPoint& point) {
-    const int kRangeSize = 30;
-    QRectF outside_rectf{ start_point_.x() - kRangeSize, start_point_.y() - kRangeSize,  width_ + 2 * kRangeSize, height_ + 2 * kRangeSize };
+    QRectF outside_rectf{ start_point_.x() - kShapeNearRangeSize, start_point_.y() - kShapeNearRangeSize,  width_ + 2 * kShapeNearRangeSize, height_ + 2 * kShapeNearRangeSize };
     if (!PointInRectangle(outside_rectf, point)) {
         return false;
     }
-    if (width_ <= 2 * kRangeSize || height_ <= 2 * kRangeSize) {
+    if (width_ <= 2 * kShapeNearRangeSize || height_ <= 2 * kShapeNearRangeSize) {
         return true;
     }
-    QRectF inside_rectf{ start_point_.x() + kRangeSize, start_point_.y() + kRangeSize,  width_ - 2 * kRangeSize, height_ - 2 * kRangeSize };
+    QRectF inside_rectf{ start_point_.x() + kShapeNearRangeSize, start_point_.y() + kShapeNearRangeSize,  width_ - 2 * kShapeNearRangeSize, height_ - 2 * kShapeNearRangeSize };
     if (PointInRectangle(inside_rectf, point)) {
         return false;
     }
