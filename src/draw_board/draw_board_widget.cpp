@@ -7,20 +7,23 @@
 #include <qtimer.h>
 #include <qpixmap.h>
 #include <qfiledialog.h>
+#include <qfileinfo.h>
+#include <qsettings.h>
+#include <qdatetime.h>
+#include <qdir.h>
 #include "public/yk_icon_button.h"
 #include "draw_widget.h"
 
+static const QString kSavePngDir = "yk_save_png_dir";
+
+static const QString kOpenPngDir = "yk_open_png_dir";
+
 DrawBoardWidget::DrawBoardWidget(QWidget *parent): QWidget(parent) {
+
+    qsettings_ = std::make_shared<QSettings>("YKSoftWare", "YKDrawBoardWidget");
     InitView();
     InitSigChannel();
     resize(800, 600);
-    // to do test
-    QTimer::singleShot(2000, [=]() {
-        QPixmap pixmap;
-        pixmap.load(":/draw_board/image/test/02.png");
-        this->resize(pixmap.size());  // to do ，如果图片太大，需要增加滚动条
-        draw_widget_->SetBackground(std::move(pixmap));
-    });
 }
 
 DrawBoardWidget::~DrawBoardWidget() {
@@ -84,6 +87,10 @@ void DrawBoardWidget::InitView() {
     text_btn_->SetUseSvg(true);
     text_btn_->SetBackgroundInfo(icon_bg_info);
 
+    open_file_btn_ = new YKIconButton();
+    open_file_btn_->Init(QSize(kIconBtnSize, kIconBtnSize), ":/draw_board/image/oper_icon/file_open_normal.svg", ":/draw_board/image/oper_icon/file_open_hover.svg", ":/draw_board/image/oper_icon/file_open_press.svg");
+    open_file_btn_->SetUseSvg(true);
+
     download_btn_ = new YKIconButton();
     download_btn_->Init(QSize(kIconBtnSize, kIconBtnSize), ":/draw_board/image/oper_icon/download_normal.svg", ":/draw_board/image/oper_icon/download_hover.svg", ":/draw_board/image/oper_icon/download_press.svg");
     download_btn_->SetUseSvg(true);
@@ -120,6 +127,7 @@ void DrawBoardWidget::InitView() {
     //menu_bar_hlayout->addStretch(1);
     menu_bar_hlayout->addWidget(shape_btn_bk_widget);
     menu_bar_hlayout->addStretch(1);
+    menu_bar_hlayout->addWidget(open_file_btn_);
     menu_bar_hlayout->addWidget(download_btn_);
     menu_bar_hlayout->addWidget(delete_btn_);
     menu_bar_hlayout->addWidget(revoke_btn_);
@@ -143,6 +151,7 @@ void DrawBoardWidget::InitSigChannel() {
     connect(download_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnDownloadBtnClicked);
     connect(delete_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnDeleteBtnClicked);
     connect(revoke_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnRevokeBtnClicked);
+    connect(open_file_btn_, &QPushButton::clicked, this, &DrawBoardWidget::OnOpenFileBtnClicked);
 }
 
 
@@ -213,11 +222,34 @@ void DrawBoardWidget::OnCustomLineBtnClicked() {
 void DrawBoardWidget::OnDownloadBtnClicked() {
     RestoreDrawWidget();
     auto pixmap = draw_widget_->grab();
+    QString save_dir_str = qsettings_->value(kSavePngDir).toString();
+    bool dir_exists = false;
+    if (!save_dir_str.isEmpty()) {
+        QDir save_dir{ save_dir_str };
+        if (save_dir.exists()) {
+            dir_exists = true;
+        }
+    }
 
-    QString filePath = QFileDialog::getSaveFileName(this, "Save Widget as PNG", "", "Images (*.png)");
-    if (!filePath.isEmpty()) {
-        if (pixmap.save(filePath, "PNG")) {
-            qDebug() << "Widget saved as PNG:" << filePath;
+    qint64 timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch(); //毫秒级
+    qDebug() << "save_dir_str: " << save_dir_str;
+    QString save_file_path;
+    if (dir_exists) {
+        QDir save_dir{ save_dir_str };
+        save_file_path =  save_dir.absoluteFilePath(QString("%1.png").arg(QString::number(timestamp))); // 拼接文件名的时候， 文件名前面不要再带路径分隔符
+    }
+    else {
+        save_file_path = QString("./%1.png").arg(QString::number(timestamp));
+    }
+
+    qDebug() << "save_file_path: " << save_file_path;
+    QString file_path = QFileDialog::getSaveFileName(this, "Save Widget as PNG", save_file_path, "Images (*.png)");
+    if (!file_path.isEmpty()) {
+        if (pixmap.save(file_path, "PNG")) {
+            qDebug() << "Widget saved as PNG:" << file_path;
+            QFileInfo file_info{ file_path };
+            qsettings_->setValue(kSavePngDir, file_info.absolutePath());
+            qsettings_->sync();
         }
         else {
             qDebug() << "Failed to save the widget as PNG.";
@@ -230,3 +262,32 @@ void DrawBoardWidget::RestoreDrawWidget() {
     draw_widget_->cur_select_shape_ = NULL;
     placeholder_btn_->setChecked(true);
 }
+
+void DrawBoardWidget::OnOpenFileBtnClicked() {
+    QString open_dir_str = qsettings_->value(kOpenPngDir).toString();
+    bool dir_exists = false;
+    if (!open_dir_str.isEmpty()) {
+        QDir open_dir{ open_dir_str };
+        if (open_dir.exists()) {
+            dir_exists = true;
+        }
+    }
+
+    //QString file_name = QFileDialog::getOpenFileName(this, "Select a Image File", "", "Images (*.png *.jpg *.jpeg);;All Files (*)");  // 这样就可以多条过滤条件
+    QString file_name = QFileDialog::getOpenFileName(this, "Select a Image File", dir_exists ? open_dir_str : QString(""), "Images (*.png *.jpg *.jpeg);");
+    if (file_name.isEmpty()) {
+        return;
+    }
+    qDebug() << "Selected file:" << file_name;
+
+    QFileInfo file_info{ file_name };
+    qsettings_->setValue(kOpenPngDir, file_info.absolutePath());
+    qsettings_->sync();
+
+    QPixmap pixmap;
+    pixmap.load(file_name);
+    this->resize(pixmap.size());  // to do ，如果图片太大，需要增加滚动条
+    draw_widget_->SetBackground(std::move(pixmap));
+
+}
+

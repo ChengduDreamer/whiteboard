@@ -1,10 +1,13 @@
 #pragma once
 #include <qwidget.h>
 #include <qevent.h>
+#include <memory>
 class QButtonGroup;
 class QToolButton;
 class DrawWidget;
 class YKIconButton;
+
+class QSettings;
 
 class DrawBoardWidget : public QWidget
 {
@@ -25,6 +28,7 @@ public slots:
     void OnRevokeBtnClicked();
     void OnCustomLineBtnClicked();
     void OnDownloadBtnClicked();
+    void OnOpenFileBtnClicked();
 private:
     void InitView();
     void InitSigChannel();
@@ -40,10 +44,12 @@ private:
     YKIconButton* placeholder_btn_ = nullptr;
     QButtonGroup* btn_group_ = nullptr;
 
-
+    YKIconButton* open_file_btn_ = nullptr;
     YKIconButton* download_btn_ = nullptr;
     YKIconButton* revoke_btn_ = nullptr;            
     YKIconButton* delete_btn_ = nullptr;
-    DrawWidget* draw_widget_;                     
+    DrawWidget* draw_widget_ = nullptr;     
 
+private:
+    std::shared_ptr<QSettings> qsettings_ = nullptr;
 };
