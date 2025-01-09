@@ -11,7 +11,7 @@
 #include <qsettings.h>
 #include <qdatetime.h>
 #include <qdir.h>
-#include "public/yk_icon_button.h"
+#include <yk_icon_button.h>
 #include "draw_widget.h"
 
 static const QString kSavePngDir = "yk_save_png_dir";

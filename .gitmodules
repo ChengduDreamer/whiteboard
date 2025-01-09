@@ -1,0 +1,3 @@
+[submodule "3rdparty/kk_qu_ui"]
+	path = 3rdparty/kk_qu_ui
+	url = git@github.com:ChengduDreamer/kk_qu_ui.git

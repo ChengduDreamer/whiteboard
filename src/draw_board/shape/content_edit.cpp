@@ -5,7 +5,7 @@
 #include <qboxlayout.h>
 #include <qsizepolicy.h>
 #include <qpixmap.h>
-#include "public/yk_icon_button.h"
+#include <yk_icon_button.h>
 #include "shape_const_def.h"
 
 TextEditWidget::TextEditWidget(QWidget* parent) : AutoSizeWidget(false, parent) {

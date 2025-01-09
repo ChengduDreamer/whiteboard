@@ -25,6 +25,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
+if(MSVC)
+	add_compile_options($<IF:$<CONFIG:Debug>,/MTd,/MT>)
+	add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+endif()
+
 add_definitions(-DUNICODE -D_UNICODE -DWIN32_LEAN_AND_MEAN)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
@@ -41,31 +46,17 @@ endif()
 include_directories(
 	${CMAKE_SOURCE_DIR}
 	${CMAKE_SOURCE_DIR}/src
+	${CMAKE_SOURCE_DIR}/3rdparty/kk_qu_ui/src
 )
 
+add_subdirectory(3rdparty)
+
 set(src_SOURCES
-	src/public/yk_icon_button.cpp 
-	src/public/yk_progress_bar.cpp 
-	src/public/yk_button.cpp
-	src/public/yk_line_edit.cpp
-	src/public/yk_label.cpp
 	src/main.cpp
 	ico.rc
 	resources.qrc
 	src/draw_board/draw_board.qrc
 )
-
-set(unit_test_01_SOURCES
-	unit_test/test_01.cpp
-) 
-add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-
-
-if(MSVC)
-	add_compile_options($<IF:$<CONFIG:Debug>,/MTd,/MT>)
-	add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
-endif()
 
 
 include_directories(		
