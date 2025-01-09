@@ -51,14 +51,6 @@ include_directories(
 
 add_subdirectory(3rdparty)
 
-set(src_SOURCES
-	src/main.cpp
-	ico.rc
-	resources.qrc
-	src/draw_board/draw_board.qrc
-)
-
-
 include_directories(		
 	${CMAKE_BINARY_DIR}
 )
@@ -66,35 +58,6 @@ include_directories(
 link_directories(
 )
 
-if(${GENERATE_SETUP})
-	#WIN32
-	add_executable(${PROJECT_NAME} #WIN32
-		${src_SOURCES}
-	)
-else()
-	add_executable(${PROJECT_NAME}
-		${src_SOURCES}
-	)
-endif()
-
 add_subdirectory(src/draw_board)
 
-SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level=\'requireAdministrator\' uiAccess=\'false\'\"")
-
-target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Core Qt5::Network Qt5::Svg draw_board )
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_custom_command(
-					TARGET ${PROJECT_NAME}
-					POST_BUILD
-					COMMAND ${QT_ROOT}/bin/windeployqt.exe --debug ${PROJECT_NAME}.exe
-					WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-	)
-else()
-	add_custom_command(
-					TARGET ${PROJECT_NAME}
-					POST_BUILD
-					COMMAND ${QT_ROOT}/bin/windeployqt.exe --release ${PROJECT_NAME}.exe
-					WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-	)
-endif()
+add_subdirectory(example)

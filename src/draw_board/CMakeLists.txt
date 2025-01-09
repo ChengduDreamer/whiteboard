@@ -20,4 +20,4 @@ set(DRAW_BOARD_SOURCES
 add_library(draw_board STATIC ${DRAW_BOARD_SOURCES})
 
 
-target_link_libraries(draw_board PRIVATE Qt5::OpenGL kkquui)
+target_link_libraries(draw_board PRIVATE Qt5::Widgets Qt5::Core Qt5::Svg kkquui)
