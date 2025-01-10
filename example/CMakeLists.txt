@@ -36,7 +36,7 @@ set(EXAMPLE_SOURCES
 	main.cpp
 	ico.rc
 	resources.qrc
-	${CMAKE_SOURCE_DIR}/src/draw_board/draw_board.qrc
+	${DRAW_BOARD_QRC}
 )
 
 include_directories(		

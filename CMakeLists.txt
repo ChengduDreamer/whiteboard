@@ -58,6 +58,8 @@ include_directories(
 link_directories(
 )
 
+set(DRAW_BOARD_QRC ${CMAKE_CURRENT_SOURCE_DIR}/src/draw_board/draw_board.qrc)
+
 add_subdirectory(src/draw_board)
 
 add_subdirectory(example)
