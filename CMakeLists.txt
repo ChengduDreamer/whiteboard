@@ -43,13 +43,14 @@ else()
 	set(PLATFORM_WIN64 TRUE)
 endif()
 
-include_directories(
-	${CMAKE_SOURCE_DIR}
-	${CMAKE_SOURCE_DIR}/src
-	${CMAKE_SOURCE_DIR}/3rdparty/kk_qu_ui/src
-)
 
 add_subdirectory(3rdparty)
+
+
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/kk_qu_ui/src
+	${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
 include_directories(		
 	${CMAKE_BINARY_DIR}
