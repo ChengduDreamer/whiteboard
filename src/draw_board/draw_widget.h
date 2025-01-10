@@ -69,6 +69,8 @@ public:
 
     void SetBackground(QPixmap&& pixmap);
 
+    void Clear();
+
 private:
     void InitView();
     void InitSigChannel();

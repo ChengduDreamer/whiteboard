@@ -291,3 +291,6 @@ void DrawBoardWidget::OnOpenFileBtnClicked() {
 
 }
 
+DrawWidget* DrawBoardWidget::GetDrawWidget() {
+    return draw_widget_;
+}

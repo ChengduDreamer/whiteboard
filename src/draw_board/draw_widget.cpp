@@ -24,6 +24,7 @@ void DrawWidget::paintEvent(QPaintEvent *event) {
    
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::TextAntialiasing);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter.setPen(Qt::NoPen);
     painter.setBrush(white_brush_);
@@ -104,11 +105,11 @@ void DrawWidget::resizeEvent(QResizeEvent *event) {
 
         if (window_width / window_height >= pixmap_width / pixmap_height) {
             float new_pixmap_width = pixmap_width * window_height / pixmap_height;
-            bg_pixmap_ = origin_pixmap_.scaled(new_pixmap_width, window_height);
+            bg_pixmap_ = origin_pixmap_.scaled(new_pixmap_width, window_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
         else {
             float new_pixmap_height = pixmap_height * window_width / pixmap_width;
-            bg_pixmap_ = origin_pixmap_.scaled(window_width, new_pixmap_height);
+            bg_pixmap_ = origin_pixmap_.scaled(window_width, new_pixmap_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
 
     }
@@ -352,3 +353,6 @@ void DrawWidget::SetBackground(QPixmap&& pixmap) {
     }
 }
 
+void DrawWidget::Clear() {
+    shapes_.clear();
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include <qwidget.h>
 #include <qevent.h>
+#include <qpixmap.h>
 #include <memory>
 class QButtonGroup;
 class QToolButton;
@@ -19,6 +20,7 @@ public:
     void resizeEvent(QResizeEvent *event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    DrawWidget* GetDrawWidget();
 public slots:
     void OnRectangleBtnClicked();
     void OnEllipseBtnClicked();
