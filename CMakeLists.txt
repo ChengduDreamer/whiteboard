@@ -59,7 +59,8 @@ include_directories(
 link_directories(
 )
 
-set(DRAW_BOARD_QRC ${CMAKE_CURRENT_SOURCE_DIR}/src/draw_board/draw_board.qrc)
+
+set(DRAW_BOARD_QRC ${CMAKE_CURRENT_SOURCE_DIR}/src/draw_board/draw_board.qrc CACHE STRING "draw_board.qrc path")
 
 add_subdirectory(src/draw_board)
 
