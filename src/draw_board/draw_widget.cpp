@@ -346,10 +346,21 @@ void DrawWidget::InitView() {
 
 void DrawWidget::SetBackground(QPixmap&& pixmap) {
     origin_pixmap_ = std::move(pixmap);
-    bg_pixmap_ = origin_pixmap_;
-    if (!bg_pixmap_.isNull()) {
-        
-        qDebug() << "SetBackground bg_pixmap_ w = " << bg_pixmap_.width() << ", h = " << bg_pixmap_.height();
+    if (origin_pixmap_.isNull()) {
+        return;
+    }
+    float pixmap_width = origin_pixmap_.width();
+    float pixmap_height = origin_pixmap_.height();
+    float window_width = this->width();
+    float window_height = this->height();
+
+    if (window_width / window_height >= pixmap_width / pixmap_height) {
+        float new_pixmap_width = pixmap_width * window_height / pixmap_height;
+        bg_pixmap_ = origin_pixmap_.scaled(new_pixmap_width, window_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    else {
+        float new_pixmap_height = pixmap_height * window_width / pixmap_width;
+        bg_pixmap_ = origin_pixmap_.scaled(window_width, new_pixmap_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 }
 

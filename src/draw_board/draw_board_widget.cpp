@@ -10,6 +10,8 @@
 #include <qfileinfo.h>
 #include <qsettings.h>
 #include <qdatetime.h>
+#include <qmessagebox.h>
+#include <qprocess.h>
 #include <qdir.h>
 #include <yk_icon_button.h>
 #include "draw_widget.h"
@@ -243,6 +245,7 @@ void DrawBoardWidget::OnDownloadBtnClicked() {
     }
 
     qDebug() << "save_file_path: " << save_file_path;
+    bool save_res = false;
     QString file_path = QFileDialog::getSaveFileName(this, "Save Widget as PNG", save_file_path, "Images (*.png)");
     if (!file_path.isEmpty()) {
         if (pixmap.save(file_path, "PNG")) {
@@ -250,9 +253,27 @@ void DrawBoardWidget::OnDownloadBtnClicked() {
             QFileInfo file_info{ file_path };
             qsettings_->setValue(kSavePngDir, file_info.absolutePath());
             qsettings_->sync();
+            save_res = true;;
+
         }
         else {
             qDebug() << "Failed to save the widget as PNG.";
+        }
+    }
+
+    if (save_res) {
+        std::shared_ptr<QMessageBox> box = std::make_shared<QMessageBox>(this);
+        box->setWindowTitle("Successfully saved");
+        box->setText(file_path + QStringLiteral("; \n 是否打开保存图片的目录?"));
+        box->setStandardButtons(QMessageBox::Ok);
+        box->setModal(true); 
+
+        // 显示消息框
+        if (QMessageBox::Ok == box->exec()) {
+            qDebug() << "QMessageBox ok";
+            QString url = QString(R"(file:///%1)").arg(file_path.replace("/", "\\"));
+            QString cmd = QString("explorer.exe /select,\"%1\"").arg(url);
+            QProcess::startDetached(cmd);
         }
     }
 }
