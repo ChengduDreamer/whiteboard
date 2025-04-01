@@ -25,9 +25,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
+#if(MSVC)
+#	add_compile_options($<IF:$<CONFIG:Debug>,/MTd,/MT>)
+#	add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+#endif()
+
 if(MSVC)
-	add_compile_options($<IF:$<CONFIG:Debug>,/MTd,/MT>)
-	add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/bigobj>")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")  # /MD or /MDd
 endif()
 
 add_definitions(-DUNICODE -D_UNICODE -DWIN32_LEAN_AND_MEAN)
